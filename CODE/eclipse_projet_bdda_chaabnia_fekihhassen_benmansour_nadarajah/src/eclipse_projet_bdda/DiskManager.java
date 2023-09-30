@@ -1,22 +1,40 @@
 package eclipse_projet_bdda;
 
-public class DiskManager {
+import java.nio.ByteBuffer;
+import java.util.Stack;
 
-  public PageId AllocPage() {
-    return null;
-  }
+public final class DiskManager {
+	
+	private static DiskManager instance = new DiskManager();
+	public DiskManager GetInstance() {
+		return instance;
+		//singletone
+	}
 
-  void ReadPage(PageId PageId, byte[] buff) {
-  }
+	public PageId AllocPage() {
+		Stack<PageId> pile = new Stack<PageId>();
+		if(DeallocPage()) {
+			
+		}
+		else {
+			
+		}
+		
+		
+		return null;
+	}
 
-  void WritePage(PageId PageId, byte[] buff) {
-  }
+	void ReadPage(PageId PageId, ByteBuffer buff) {
+	}
 
-  void DeallocPage(PageId PageId) {
-  }
+	void WritePage(PageId PageId, ByteBuffer buff) {
+	}
 
-  int GetCurrentCountAllocPages() {
-    return 0;
-  }
+	void DeallocPage(PageId PageId) {
+	}
+
+	int GetCurrentCountAllocPages() {
+		return 0;
+	}
 
 }
