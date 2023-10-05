@@ -8,4 +8,12 @@ public class PageId {
 		this.FileIdx = FileIdx;
 		this.PageIdx = PageIdx;
 	}
+
+	public int getFileIdx() {
+		return FileIdx;
+	}
+
+	public int getPageIdx() {
+		return PageIdx;
+	}
 }
