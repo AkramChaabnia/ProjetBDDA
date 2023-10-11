@@ -7,12 +7,22 @@ import java.nio.ByteBuffer;
 import java.util.Stack;
 import java.io.*;
 
+/**
+ * Classe DiskManager qui gère l'allocation et la désallocation de pages sur le disque.
+ * Elle propose une API permettant d'allouer, lire, écrire et désallouer des pages.
+ */
 public final class DiskManager {
 
+	// instance unique du DiskManager
 	private static DiskManager instance = new DiskManager();
+	// pile contenant les identifiants des pages dispo
 	Stack<PageId> pagesDispo = new Stack<PageId>();
+	// compteur du nombre total de pages allouées
 	private static int count = 0;
 
+	/**
+	 * Constructeur privé initialisant les fichiers du DM
+	 */
 	private DiskManager() {
         try {
             for (int i = 0; i < DBParams.DMFileCount; i++) {
@@ -25,10 +35,19 @@ public final class DiskManager {
         }
 	}
 
+	/**
+	 * Obtenir l'instance unique du DM
+	 * @return l'instance unique du DM
+	 */
 	public static DiskManager getInstance() {
 		return instance;
 	}
 
+	 /**
+     * Alloue une nouvelle page
+     *
+     * @return l'identifiant de la nouvelle page.
+     */
 	public PageId AllocPage() {
 		PageId PageId = null;
 		if (!pagesDispo.isEmpty()) {
@@ -77,6 +96,12 @@ public final class DiskManager {
 		return PageId;
 	}
 
+	/**
+	 * Lit le contenu d'une page dans un buffer
+	 * @param PageId l'id de la page à lire
+	 * @param buff le buffer sur lequel le contenu sera lu
+	 * @throws IOException en cas d'erreur I/O
+	 */
 	void ReadPage(PageId PageId, ByteBuffer buff) throws IOException {
 		try (RandomAccessFile file = new RandomAccessFile(DBParams.DBPath, "r")) {
 			file.seek(PageId.getPageIdx() * DBParams.SGBDPageSize);
@@ -85,7 +110,12 @@ public final class DiskManager {
 		}
 	}
 	
-
+    /**
+	 * Ecrit le contenu d'un buffer dans une page
+	 * @param PageId l'id de la page
+	 * @param buff le buffer sur lequel le contenu sera lu
+	 * @throws IOException en cas d'erreur I/O
+	 */
 	void WritePage(PageId PageId, ByteBuffer buff) throws IOException {
 		try (RandomAccessFile file = new RandomAccessFile(DBParams.DBPath, "rw")) {
 			file.seek(PageId.getPageIdx() * DBParams.SGBDPageSize);
@@ -94,11 +124,19 @@ public final class DiskManager {
 		}
 	}
 
+	/**
+	 * Désalloue une page et l'ajoute à la liste des pages dispo
+	 * @param PageId
+	 */
 	void DeallocPage(PageId PageId) {
 		pagesDispo.push(PageId);
 		count--;
 	}
 
+	/**
+	 * Obtient le nombre actuel des pages allouées
+	 * @return le nb actuel des pages allouées
+	 */
 	int GetCurrentCountAllocPages() {
 		return count;
 	}
