@@ -77,7 +77,7 @@ public final class DiskManager {
 			try {
 				fileOutputStream = new FileOutputStream(petit_fic);
 				// OU DBparams.SGBDPagesize
-	            byte[] nouvelle_page = new byte[4095];
+	            byte[] nouvelle_page = new byte[DBParams.SGBDPageSize];
 	            fileOutputStream.write(nouvelle_page);
 	            fileOutputStream.close();
 	            
