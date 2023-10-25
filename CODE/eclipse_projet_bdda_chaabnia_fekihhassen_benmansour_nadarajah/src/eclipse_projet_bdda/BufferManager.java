@@ -5,23 +5,18 @@ import java.nio.ByteBuffer;
 public class BufferManager {
     private static BufferManager instance = new BufferManager();
 
+    // informations associées à chaque frame
+    private ByteBuffer[] buffers;
+    private PageId[] pageIds;
+    private int[] pinCounts;
+    private boolean[] flagDirty;
+    private int[] accessCpt;
+
     public static BufferManager getInstance() {
         return instance;
     }
-    
-    public ByteBuffer GetPage(PageId pageId) {
-		return null;
-    	
-    }
-    
-    public void FreePage(PageId pageId, boolean valDirty) {
-//    	int pinCount = getPageIdx();
-    	
-    }
-    
-    public void FlushAll() {
-    	
-    }
-    
-    
+
+   
+
+
 }
