@@ -17,6 +17,14 @@ public class BufferManager {
         return instance;
     }
 
+    /**
+     *  Lorsqu'une page est demandée, on recherche si la page est déjà dans le buffer, 
+     * si elle l'est, on incremente le pinCount associé à la frame correspondante.
+     *  Si la page n'est pas dans le buffer, on suit une procédure pour trouver une frame libre ou à remplacer. 
+     *  On charge ensuite la nouvelle page dans la frame choisie et ajustez le pinCount et le dirty en conséquence.
+     * @param pageId
+     * @return
+     */
     public ByteBuffer GetPage(PageId pageId) {
         // on recherche si la page est déjà dans le buffer
         for ( int i = 0 ; i < DBParams.frameCount; i++ ) {
@@ -27,7 +35,7 @@ public class BufferManager {
             }
         }
 
-        // si la page n'est pas dans le buffer, trouvez une frame libre ou à remplacer
+        // si la page n'est pas dans le buffer, on une frame libre ou à remplacer
         int freeFrameIndex = -1; // indice de la première frame libre trouvée
         int minAccessCpt = Integer.MAX_VALUE; // cpt d'accès minimum pour la politique LFU
         for (int i = 0; i < DBParams.frameCount; i++) {
@@ -88,4 +96,66 @@ public class BufferManager {
     }
 
 
+    /**
+     * Lorsqu'on libere une page avec FreePage  on décremente le pinCount, 
+     * ce qui permet de suivre le nombre d'utilisations de la frame.
+     *  On ajuste également le dirty en fonction de la valeur de valDirty.
+     * @param pageId
+     * @param valDirty
+     * @throws PageNotFoundException
+     */
+    public void FreePage(PageId pageId, boolean valDirty) throws PageNotFoundException {
+        // on cherche si la page est déjà dans le buffer
+        for (int i = 0; i < DBParams.frameCount; i++) {
+            if (pageIds[i] != null && pageIds[i].equals(pageId)) {
+                // page trouvée dans le buffer
+                pinCounts[i]--; // Décrémenter le pin_count de la page
+
+                if (valDirty) {
+                    // i valDirty vrai, définir le flag dirty à true
+                    flagDirty[i] = true;
+                }
+
+                return; 
+            }
+        }
+
+        // si la page n'est pas trouvée dans le buffer, on lance une exception perso
+        throw new PageNotFoundException("La page avec l'ID " + pageId + " n'a pas été trouvée dans le buffer.");
+    }
+
+    /**
+     *  Dans cette méthode on parcourt toutes les frames du buffer et on écrit sur le disque toutes les pages qui ont le dirty à 1.
+     *  Après l'écriture, on remet à zéro les informations associées à chaque frame,
+     *  y compris pageIds, pinCounts, flagDirty, et accessCpt, ce qui prépare les frames pour une nouvelle utilisation.
+     */
+    public void FlushAll() {
+        // on parcourt toutes les frames du buffer
+        for (int i = 0; i < DBParams.frameCount; i++) {
+            if (pageIds[i] != null && flagDirty[i]) {
+                // si le flag dirty est à 1 pour cette frame, écrire la page sur le disque
+                try {
+                    DiskManager.getInstance().WritePage(pageIds[i], buffers[i]);
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+
+                // on remet à zero les info de la trame
+                pageIds[i] = null;
+                pinCounts[i] = 0;
+                flagDirty[i] = false;
+                accessCpt[i] = 0;
+            }
+        }
+    }
+
+
 }
+
+
+
+
+
+   
+
+
