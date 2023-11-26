@@ -19,28 +19,28 @@ public class PageId {
 		return pageId;
 	}
 	/*
-	public String Tostring() {
-		return "identifiant : "+ fileId + "numero : "+ pageId;
-	}
-	*/
-	
+	 * public String Tostring() {
+	 * return "identifiant : "+ fileId + "numero : "+ pageId;
+	 * }
+	 */
+
 	public String toString() {
-	    return "PageId{" +"fileIndex=" + fileId +", pageIndex=" + pageId +'}';
+		return "PageId{" + "fileIndex=" + fileId + ", pageIndex=" + pageId + '}';
 	}
-	
+
 	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
-		if(obj==null ||getClass()!=obj.getClass()) {
+		if (obj == null || getClass() != obj.getClass()) {
 			return false;
 		}
 		PageId pageIdi = (PageId) obj;
 		return fileId == pageIdi.fileId && (pageId == pageIdi.pageId);
 	}
-	
+
 	public int hashcode() {
-		return Objects.hash(fileId,pageId);
+		return Objects.hash(fileId, pageId);
 	}
-	
+
 }

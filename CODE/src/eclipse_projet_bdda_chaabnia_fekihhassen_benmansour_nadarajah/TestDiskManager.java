@@ -1,10 +1,13 @@
 package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
+import java.nio.ByteBuffer;
+
 public class TestDiskManager {
 
     public static void main(String[] args) {
-    	testEcritureLecturePage();
+        testEcritureLecturePage();
         testAllocDeallocPage();
+
         // Ajoutez d'autres tests au besoin
     }
 
@@ -20,26 +23,26 @@ public class TestDiskManager {
         System.out.println("Page allouée : " + pageId);
 
         // Données à écrire dans la page
-        byte[] dataToWrite = "Hello".getBytes();
+        ByteBuffer dataToWrite = ByteBuffer.wrap("Hello".getBytes());
 
         // Écriture des données dans la page
         diskManager.writePage(pageId, dataToWrite);
 
         // Lecture des données depuis la page
-        byte[] dataRead = new byte[DBParams.SGBDPageSize];
+        ByteBuffer dataRead = ByteBuffer.allocate(DBParams.SGBDPageSize);
         diskManager.readPage(pageId, dataRead);
 
         // Affichage des résultats
-        System.out.println("Données écrites : " + new String(dataToWrite));
-        System.out.println("Données lues    : " + new String(dataRead));
+        System.out.println("Données écrites : " + new String(dataToWrite.array()));
+        System.out.println("Données lues    : " + new String(dataRead.array()));
 
         // Vérification
-        if (new String(dataToWrite).equals(new String(dataRead))) {
+        if (new String(dataToWrite.array()).equals(new String(dataRead.array()))) {
             System.out.println("Test réussi.");
         } else {
             System.out.println("Test échoué.");
         }
-        
+
         diskManager.deallocPage(pageId);
 
         // Remise de la taille de page par défaut (4096 octets)
