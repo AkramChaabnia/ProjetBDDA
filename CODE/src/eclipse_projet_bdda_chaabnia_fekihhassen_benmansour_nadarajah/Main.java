@@ -8,8 +8,7 @@ public class Main {
 		DBParams.DBPath = "..\\..\\BD\\";
 		DBParams.SGBDPageSize = 4096;
 		DBParams.DMFileCount = 4;
-
-		// DBParams.frameCount = 2;
+		DBParams.frameCount = 2;
 
 		// DiskManager.getInstance();
 
