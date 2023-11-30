@@ -18,14 +18,14 @@ public class PageId {
 	public int getPageIdx() {
 		return pageId;
 	}
+
 	/*
 	 * public String Tostring() {
 	 * return "identifiant : "+ fileId + "numero : "+ pageId;
 	 * }
 	 */
-
 	public String toString() {
-		return "PageId{" + "fileIndex=" + fileId + ", pageIndex=" + pageId + '}';
+		return "PageId{" + "fileid=" + fileId + ", pageId=" + pageId + '}';
 	}
 
 	public boolean equals(Object obj) {
