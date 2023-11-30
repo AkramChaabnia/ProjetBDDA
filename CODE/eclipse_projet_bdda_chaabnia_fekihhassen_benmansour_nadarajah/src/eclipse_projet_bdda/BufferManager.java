@@ -28,7 +28,7 @@ public class BufferManager {
      * @param pageId
      * @return
      */
-    public ByteBuffer getPage(PageId pageId) {
+    public ByteBuffer getPage(PageId pageId) throws IOException {
         // On recherche si la page est déjà dans le buffer
         for (int i = 0; i < DBParams.frameCount; i++) {
             if (pageIds[i] != null && pageIds[i].equals(pageId)) {
@@ -58,20 +58,12 @@ public class BufferManager {
             // On écrit la page existante dans cette frame si elle est dirty
             if (flagDirty[freeFrameIndex]) {
                 // Écrire la page
-                try {
-                    DiskManager.getInstance().writePage(pageIds[freeFrameIndex], buffers[freeFrameIndex]);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
+                DiskManager.getInstance().writePage(pageIds[freeFrameIndex], buffers[freeFrameIndex]);
             }
         }
 
         // Lire la nouvelle page dans la frame sélectionnée
-        try {
-            DiskManager.getInstance().readPage(pageId, buffers[freeFrameIndex]);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        DiskManager.getInstance().readPage(pageId, buffers[freeFrameIndex]);
 
         pageIds[freeFrameIndex] = pageId;
         pinCounts[freeFrameIndex] = 1;
@@ -132,17 +124,12 @@ public class BufferManager {
      * y compris pageIds, pinCounts, flagDirty et accessCpt, ce qui prépare les
      * frames pour une nouvelle utilisation.
      */
-    public void flushAll() {
+    public void flushAll() throws IOException {
         // On parcourt toutes les frames du buffer
         for (int i = 0; i < DBParams.frameCount; i++) {
             if (pageIds[i] != null && flagDirty[i]) {
                 // Si le flag dirty est à 1 pour cette frame, écrire la page sur le disque
-                try {
-                    DiskManager.getInstance().writePage(pageIds[i], buffers[i]);
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-
+                DiskManager.getInstance().writePage(pageIds[i], buffers[i]);
                 // On remet à zéro les informations de la frame
                 pageIds[i] = null;
                 pinCounts[i] = 0;
@@ -151,4 +138,5 @@ public class BufferManager {
             }
         }
     }
+    
 }
