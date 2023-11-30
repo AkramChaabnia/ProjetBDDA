@@ -1,15 +1,13 @@
 package eclipse_projet_bdda;
-/**
- * Classe contenant les paramètres de la base de données
- */
+
 public class DBParams {
-	// chemin vers le dossier de la bdd
+	// Chemin vers le dossier DB
 	public static String DBPath;
-	// taille d'une page 
+	// Taille d'une page du SGBD
 	public static int SGBDPageSize;
-	// nombre max de fichiers gérés par le DM
+	// Nombre maximal de fichiers geres par le disk
 	public static int DMFileCount;
-	// compteur de trames
+	// Nombre de frames dans le buffer pool
 	public static int frameCount;
-	
+
 }

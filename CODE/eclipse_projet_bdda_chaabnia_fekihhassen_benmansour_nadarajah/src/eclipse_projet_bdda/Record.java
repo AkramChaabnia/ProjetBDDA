@@ -82,7 +82,7 @@ public class Record {
                     int length = buff.getInt();
                     StringBuilder varStringValue = new StringBuilder();
                     for (int j = 0; j < length; j++) {
-                        char varChar = buff.getChar(); // Utilisez une variable différente ici
+                        char varChar = buff.getChar(); 
                         varStringValue.append(varChar);
                     }
                     recvalues.add(varStringValue.toString());

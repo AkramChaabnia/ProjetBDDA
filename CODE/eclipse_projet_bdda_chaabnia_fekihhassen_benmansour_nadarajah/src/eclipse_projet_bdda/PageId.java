@@ -1,20 +1,46 @@
 package eclipse_projet_bdda;
 
+import java.util.Objects;
 
 public class PageId {
-	private int FileIdx;
-	private int PageIdx;
+	private int fileId;
+	private int pageId;
 
-	public PageId(int FileIdx, int PageIdx) {
-		this.FileIdx = FileIdx;
-		this.PageIdx = PageIdx;
+	public PageId(int fileId, int pageId) {
+		this.fileId = fileId;
+		this.pageId = pageId;
 	}
 
 	public int getFileIdx() {
-		return FileIdx;
+		return fileId;
 	}
 
 	public int getPageIdx() {
-		return PageIdx;
+		return pageId;
 	}
+	/*
+	 * public String Tostring() {
+	 * return "identifiant : "+ fileId + "numero : "+ pageId;
+	 * }
+	 */
+
+	public String toString() {
+		return "PageId{" + "fileIndex=" + fileId + ", pageIndex=" + pageId + '}';
+	}
+
+	public boolean equals(Object obj) {
+		if (this == obj) {
+			return true;
+		}
+		if (obj == null || getClass() != obj.getClass()) {
+			return false;
+		}
+		PageId pageIdi = (PageId) obj;
+		return fileId == pageIdi.fileId && (pageId == pageIdi.pageId);
+	}
+
+	public int hashcode() {
+		return Objects.hash(fileId, pageId);
+	}
+
 }
