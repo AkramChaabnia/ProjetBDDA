@@ -23,23 +23,23 @@ public class FileManager {
     }
 
     public PageId createNewHeaderPage() throws IOException, PageNotFoundException {
-        // Étape 1 : Allouer une nouvelle page via le DiskManager
+    
         DiskManager dm = DiskManager.getInstance();
         PageId newHeaderPageId = dm.allocPage();
     
-        // Étape 2 : Récupérer le ByteBuffer correspondant à la nouvelle page via le BufferManager
+
         BufferManager bm = BufferManager.getInstance();
         ByteBuffer headerPageBuffer = bm.getPage(newHeaderPageId);
-    
-        // Étape 3 : Écrire les deux PageIds factices dans le ByteBuffer
-        // Vous devez écrire deux PageIds factices dans le ByteBuffer ici
-    
-        // Étape 4 : Libérer la page auprès du BufferManager avec le flag dirty
+
+        headerPageBuffer.putInt(0); 
+        headerPageBuffer.putInt(0); 
+
+
         bm.freePage(newHeaderPageId, true);
     
-        // Étape 5 : Retourner le PageId de la nouvelle Header Page
         return newHeaderPageId;
     }
+    
     
     
 }
