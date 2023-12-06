@@ -31,8 +31,8 @@ public class FileManager {
         BufferManager bm = BufferManager.getInstance();
         ByteBuffer headerPageBuffer = bm.getPage(newHeaderPageId);
 
-        headerPageBuffer.putInt(0); 
-        headerPageBuffer.putInt(0); 
+        headerPageBuffer.putInt(-1); 
+        headerPageBuffer.putInt(-1); 
 
 
         bm.freePage(newHeaderPageId, true);
