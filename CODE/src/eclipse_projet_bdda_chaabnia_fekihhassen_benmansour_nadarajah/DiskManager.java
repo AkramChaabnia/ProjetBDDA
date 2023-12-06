@@ -1,5 +1,6 @@
 package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
+
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -57,13 +58,14 @@ public class DiskManager {
 		return pageId;
 	}
 
-	public void readPage(PageId pageId, ByteBuffer buff) {
+	public void readPage(PageId pageId, ByteBuffer buff) throws IOException {
 		ByteBuffer page = contenuDePage.get(pageId);
 		int copyLength = Math.min(buff.remaining(), pageSize);
 		page.limit(copyLength);
 		buff.put(page);
 		page.rewind();
 	}
+	
 
 	public void writePage(PageId pageId, ByteBuffer buff) {
 		ByteBuffer page = contenuDePage.get(pageId);

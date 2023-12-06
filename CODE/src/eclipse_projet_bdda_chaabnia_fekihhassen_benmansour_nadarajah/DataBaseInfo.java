@@ -1,30 +1,28 @@
 package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
+import java.io.*;
 import java.util.ArrayList;
-import java.io.ObjectOutputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.ObjectInputStream;
 
-//Ajouter des exceptions  -> try catch() dans init et finish
+public class DataBaseInfo implements Serializable {
+	private static final long serialVersionUID = 1L; // Ajout de la version de sérialisation
+	private static DataBaseInfo instance; // Instance unique
 
-public class DataBaseInfo {
 	private ArrayList<TableInfo> tab;
 	private int compteur;
 
 	private DataBaseInfo(int compteur) {
-		// Taille a verifier
-		tab = new ArrayList<TableInfo>();
-		// Initialisation requise ou initialiser a 0;
+		// Taille à vérifier
+		tab = new ArrayList<>();
+		// Initialisation requise ou initialiser à 0;
 		this.setCompteur(compteur);
 	}
-	// FAIRE UN DEUXIEME CONSTRUCTEUR
 
-	// CREATION D'UNE SEULE ET UNIQUE INSTANCE
+	// Méthode pour obtenir l'instance unique de DataBaseInfo
 	public static DataBaseInfo getInstance() {
-		return new DataBaseInfo(0);
+		if (instance == null) {
+			instance = new DataBaseInfo(0);
+		}
+		return instance;
 	}
 
 	public ArrayList<TableInfo> getTab() {
@@ -38,9 +36,6 @@ public class DataBaseInfo {
 	public void setCompteur(int compteur) {
 		this.compteur = compteur;
 	}
-
-	// Ajouter try catch() A verifier notamment le remplissage de databaseinfo avec
-	// les infos
 
 	public void AddTableInfo(TableInfo t) {
 		tab.add(t);
@@ -57,19 +52,14 @@ public class DataBaseInfo {
 	}
 
 	public void Init() {
-		File file = new File("DB/DBIfo.save");
+		File file = new File("DB/DBInfo.save");
 
 		if (file.exists()) {
-			try {
-				FileInputStream fic = new FileInputStream(file);
-				ObjectInputStream obj = new ObjectInputStream(fic); // deserialise l'objet
-
+			try (FileInputStream fic = new FileInputStream(file);
+					ObjectInputStream obj = new ObjectInputStream(fic)) {
 				DataBaseInfo dbInfo = (DataBaseInfo) obj.readObject();
 				this.tab = dbInfo.getTab();
 				this.compteur = dbInfo.getCompteur();
-
-				obj.close();
-				fic.close();
 			} catch (IOException | ClassNotFoundException e) {
 				e.printStackTrace();
 			}
@@ -81,15 +71,13 @@ public class DataBaseInfo {
 	public void Finish() {
 		try {
 			File file = new File("DB/DBInfo.save");
-			FileOutputStream fileOutputStream = new FileOutputStream(file);
-			ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream);
-			objectOutputStream.writeObject(this);
-			objectOutputStream.close();
-			fileOutputStream.close();
+			try (FileOutputStream fileOutputStream = new FileOutputStream(file);
+					ObjectOutputStream objectOutputStream = new ObjectOutputStream(fileOutputStream)) {
+				objectOutputStream.writeObject(this);
+			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
 	// A TESTER
-
 }

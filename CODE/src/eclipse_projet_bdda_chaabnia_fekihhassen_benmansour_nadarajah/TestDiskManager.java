@@ -1,17 +1,19 @@
 package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
+
+import java.io.IOException;
 import java.nio.ByteBuffer;
 
 public class TestDiskManager {
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws IOException {
         testEcritureLecturePage();
         testAllocDeallocPage();
 
         // Ajoutez d'autres tests au besoin
     }
 
-    private static void testEcritureLecturePage() {
+    private static void testEcritureLecturePage() throws IOException {
         System.out.println("TestEcritureLecturePage:");
 
         DBParams.SGBDPageSize = 5;
