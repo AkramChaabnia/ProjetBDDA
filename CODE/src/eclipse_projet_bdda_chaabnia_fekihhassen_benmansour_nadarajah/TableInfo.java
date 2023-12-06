@@ -42,7 +42,7 @@ public class TableInfo {
 		this.colInfoList = colInfoList;
 	}
 
-	public PageId getHeaderPagerId() {
+	public PageId getHeaderPageId() {
 		return headerPageId;
 	}
 
