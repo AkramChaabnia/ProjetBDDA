@@ -7,8 +7,8 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DiskManager {
-	private static final int pageSize = 4096;
-	// pourquoi 4096 au lieu de DBParams.SGBDPagesize
+	private static final int pageSize = DBParams.SGBDPageSize;
+	// pourquoi 4096 au lieu de
 	private static DiskManager instance = new DiskManager();
 
 	private int[] tailleFichier;
@@ -16,8 +16,8 @@ public class DiskManager {
 	private HashMap<PageId, ByteBuffer> contenuDePage;
 
 	private DiskManager() {
-		tailleFichier = new int[10];
-		// pourquoi 10 au lieu de DBParams.DMFileCount
+		tailleFichier = new int[DBParams.DMFileCount];
+		// pourquoi 10 au lieu de
 		pagesDesalloue = new ArrayList<>();
 		contenuDePage = new HashMap<>();
 

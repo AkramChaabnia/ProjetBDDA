@@ -35,7 +35,7 @@ public class DataBaseInfo {
 		return compteur;
 	}
 
-	public void setCompteur(int compteur) {
+	private void setCompteur(int compteur) {
 		this.compteur = compteur;
 	}
 
