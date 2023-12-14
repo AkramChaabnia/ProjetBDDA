@@ -2,84 +2,103 @@ package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
 import java.nio.ByteBuffer;
 
-public class TestDiskManager {
+public class TestDiskmanager {
 
     public static void main(String[] args) {
-        testEcritureLecturePage();
-        testAllocDeallocPage();
-
-        // Ajoutez d'autres tests au besoin
+        DiskManager disk = DiskManager.getInstance();
+        testLectureEcriturePage(disk);
+        testAllocationDesallocationPage(disk);
+        // testRechercheFichier();
+        testTailleDePage();
     }
 
-    private static void testEcritureLecturePage() {
-        System.out.println("TestEcritureLecturePage:");
-
+    private static void testLectureEcriturePage(DiskManager disk) {
+        System.out.println("TestLectureEcriturePage:");
         DBParams.SGBDPageSize = 5;
+        System.out.println("Taille de page: " + DBParams.SGBDPageSize);
 
-        DiskManager diskManager = DiskManager.getInstance();
+        DiskManager diskManager = disk;
 
-        // Allocation d'une page
-        PageId pageId = diskManager.allocPage();
-        System.out.println("Page allouée : " + pageId);
+        // Allocation de page
+        PageId pageId = diskManager.allocatePage();
+        System.out.println("Page Alloué : " + pageId);
 
-        // Données à écrire dans la page
-        ByteBuffer dataToWrite = ByteBuffer.wrap("Hello".getBytes());
-
-        // Écriture des données dans la page
+        // Ecriture de page
+        ByteBuffer dataToWrite = ByteBuffer.allocate(DBParams.SGBDPageSize);
+        dataToWrite.put("Hello".getBytes());
+        dataToWrite.flip(); // Flip the buffer to prepare it for reading
         diskManager.writePage(pageId, dataToWrite);
+        dataToWrite.rewind(); // Reset position to start
 
-        // Lecture des données depuis la page
-        ByteBuffer dataRead = ByteBuffer.allocate(DBParams.SGBDPageSize);
-        diskManager.readPage(pageId, dataRead);
+        // Récupère les données à l'aide de readPage et les stocke dans dataRead
+        ByteBuffer dataRead = diskManager.readPage(pageId);
+        dataRead.rewind(); // Reset position to start
 
-        // Affichage des résultats
-        System.out.println("Données écrites : " + new String(dataToWrite.array()));
-        System.out.println("Données lues    : " + new String(dataRead.array()));
+        // Comparaison des données
+        boolean testPassed = dataToWrite.equals(dataRead);
+        System.out.println("Ecriture: " + new String(dataToWrite.array()));
+        System.out.println("Lecture: " + new String(dataRead.array()));
 
-        // Vérification
-        if (new String(dataToWrite.array()).equals(new String(dataRead.array()))) {
-            System.out.println("Test réussi.");
+        // Verification
+        if (testPassed) {
+            System.out.println("Test Reussi.");
         } else {
-            System.out.println("Test échoué.");
+            System.out.println("Test Echoué.");
         }
 
-        diskManager.deallocPage(pageId);
+        diskManager.deallocatePage(pageId);
+        // Reinitialisation page de defaut
+        DBParams.SGBDPageSize = 4096;
+        System.out.println("Taille de page: " + DBParams.SGBDPageSize);
 
-        // Remise de la taille de page par défaut (4096 octets)
+    }
+
+    private static void testAllocationDesallocationPage(DiskManager disk) {
+        System.out.println("\nTestAllocationDeallocationPage:");
+        DBParams.SGBDPageSize = 4;
+        DiskManager diskManager = disk;
+
+        // Allocation de pages
+        PageId pageId1 = diskManager.allocatePage();
+        PageId pageId2 = diskManager.allocatePage();
+        System.out.println("Allocation de pages: " + pageId1 + ", " + pageId2);
+
+        // desallocation de page
+        diskManager.deallocatePage(pageId1);
+
+        // Allocate de page
+        PageId pageId3 = diskManager.allocatePage();
+        System.out.println("Allocation de page: " + pageId3);
+
+        // Verification nombre de pages allouées
+        int countAllocatedPages = diskManager.getCurrentAllocatedPageCount();
+        System.out.println("Nombres de pages alloués: " + countAllocatedPages);
+
+        // Verification
+        if (countAllocatedPages == 2) {
+            System.out.println("Test Reussi.");
+        } else {
+            System.out.println("Test Echoué.");
+        }
+
+        // Reinitialisation de defaut de page
         DBParams.SGBDPageSize = 4096;
     }
 
-    private static void testAllocDeallocPage() {
-        System.out.println("\nTestAllocDeallocPage:");
+    private static void testTailleDePage() {
+        System.out.println("TestTailleDePage:");
+        int expectedPageSize = 5;
+        DBParams.SGBDPageSize = expectedPageSize;
+        System.out.println("Taille de page: " + DBParams.SGBDPageSize);
 
-        DBParams.SGBDPageSize = 4;
-
-        DiskManager diskManager = DiskManager.getInstance();
-
-        // Allocation de deux pages
-        PageId pageId1 = diskManager.allocPage();
-        PageId pageId2 = diskManager.allocPage();
-        System.out.println("Pages allouées : " + pageId1 + ", " + pageId2);
-
-        // Désallocation de la première page
-        diskManager.deallocPage(pageId1);
-
-        // Allocation d'une nouvelle page
-        PageId pageId3 = diskManager.allocPage();
-        System.out.println("Nouvelle page allouée : " + pageId3);
-
-        // Vérification du nombre de pages allouées
-        int countAllocPages = diskManager.getCurrentCountAllocPages();
-        System.out.println("Nombre de pages allouées : " + countAllocPages);
-
-        // Vérification
-        if (countAllocPages == 2) {
-            System.out.println("Test réussi.");
+        if (DBParams.SGBDPageSize == expectedPageSize) {
+            System.out.println("Test Reussi.");
         } else {
-            System.out.println("Test échoué.");
+            System.out.println("Test Echoué.");
         }
 
-        // Remise de la taille de page par défaut (4096 octets)
+        // Reinitialisation page de defaut
         DBParams.SGBDPageSize = 4096;
+        System.out.println("Taille de page: " + DBParams.SGBDPageSize);
     }
 }

@@ -1,53 +1,65 @@
 package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public class TableInfo {
-	private String nom_relation;
-	private int nb_colonnes;
-	private ArrayList<ColInfo> colInfoList;
+    private String nomRelation;
+    private int numColonnes;
+    private List<String> nomColonnes;
+    private List<String> typeColonnes;
 
-	private PageId headerPageId;
+    // private PageId headerPageId;
 
-	public TableInfo(String nom_relation, int nb_colonnes, PageId headerPageId) {
-		this.nom_relation = nom_relation;
-		this.nb_colonnes = nb_colonnes;
-		this.colInfoList = new ArrayList<>();
-		this.headerPageId = headerPageId;
+    public TableInfo(String nomRelation, int numColonnes, List<String> nomColonnes, List<String> typeColonnes/*
+                                                                                                              * , PageId
+                                                                                                              * headerPageId
+                                                                                                              */) {
+        this.nomRelation = nomRelation;
+        this.numColonnes = numColonnes;
+        this.nomColonnes = nomColonnes;
+        this.typeColonnes = typeColonnes;
 
-	}
-	// PREVOIR UN DEUXIEME CONSTRUCTEUR
+        // this.headerPageId = headerPageId;
+    }
 
-	public String getNom_relation() {
-		return nom_relation;
-	}
+    public String GetNomRelation() {
+        return nomRelation;
+    }
 
-	public void setNom_relation(String nom_relation) {
-		this.nom_relation = nom_relation;
-	}
+    public void setNomRelation(String nomRelation) {
+        this.nomRelation = nomRelation;
+    }
 
-	public int getNb_colonnes() {
-		return nb_colonnes;
-	}
+    public int getNumColonnes() {
+        return numColonnes;
+    }
 
-	public void setNb_colonnes(int nb_colonnes) {
-		this.nb_colonnes = nb_colonnes;
-	}
+    public void setNumColonnes(int numColonnes) {
+        this.numColonnes = numColonnes;
+    }
 
-	public ArrayList<ColInfo> getColInfoList() {
-		return colInfoList;
-	}
+    public List<String> getNomColonnes() {
+        return nomColonnes;
+    }
 
-	public void setColInfoList(ArrayList<ColInfo> colInfoList) {
-		this.colInfoList = colInfoList;
-	}
+    public void setNomColonnes(List<String> nomColonnes) {
+        this.nomColonnes = nomColonnes;
+    }
 
-	public PageId getHeaderPagerId() {
-		return headerPageId;
-	}
+    public List<String> getTypeColonnes() {
+        return typeColonnes;
+    }
 
-	public void setHeaderPageId(PageId headerPageId) {
-		this.headerPageId = headerPageId;
-	}
-
+    public void setTypeColonnes(List<String> typeColonnes) {
+        this.typeColonnes = typeColonnes;
+    }
+    /*
+     * public PageId getHeaderPageId() {
+     * return headerPageId;
+     * }
+     * 
+     * public void setHeaderPageId(PageId headerPageId) {
+     * this.headerPageId = headerPageId;
+     * }
+     */
 }

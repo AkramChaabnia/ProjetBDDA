@@ -7,92 +7,105 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class DiskManager {
-	private static final int pageSize = DBParams.SGBDPageSize;
-	// pourquoi 4096 au lieu de
+	private static final int pageSize = 4096;
 	private static DiskManager instance = new DiskManager();
-
-	private int[] tailleFichier;
-	private ArrayList<PageId> pagesDesalloue;
-	private HashMap<PageId, ByteBuffer> contenuDePage;
+	private int[] fileSize;
+	private ArrayList<PageId> deallocatedPages;
+	private HashMap<PageId, ByteBuffer> pageContents;
 
 	private DiskManager() {
-		tailleFichier = new int[DBParams.DMFileCount];
-		// pourquoi 10 au lieu de
-		pagesDesalloue = new ArrayList<>();
-		contenuDePage = new HashMap<>();
+		fileSize = new int[10];
+		deallocatedPages = new ArrayList<>();
+		pageContents = new HashMap<>();
 
 		try {
 			for (int i = 0; i < DBParams.DMFileCount; i++) {
 				String fileName = DBParams.DBPath + "f" + i + ".data";
+				// Creation fichier
 				FileOutputStream fileOutputStream = new FileOutputStream(fileName);
 				fileOutputStream.close();
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	public static DiskManager getInstance() {
 		return instance;
 	}
 
-	public PageId allocPage() {
-
+	public PageId allocatePage() {
 		PageId pageId = null;
 
-		if (!pagesDesalloue.isEmpty()) {
-			pageId = pagesDesalloue.iterator().next();
-			pagesDesalloue.remove(pageId);
+		if (!deallocatedPages.isEmpty()) {
+			pageId = deallocatedPages.iterator().next();
+			deallocatedPages.remove(pageId);
 		} else {
-			int numFic = getMinFic();
-			int numPage = tailleFichier[numFic] / pageSize;
-			tailleFichier[numFic] = tailleFichier[numFic] + pageSize;
-			pageId = new PageId(numFic, numPage);
+			int fileNumber = getMinFile();
+			int pageNumber = fileSize[fileNumber] / pageSize;
+			fileSize[fileNumber] += pageSize;
+			pageId = new PageId(fileNumber, pageNumber);
+			// Increment the page count
+			fileSize[fileNumber] += pageSize;
 		}
 
 		ByteBuffer page = ByteBuffer.allocate(pageSize);
-		contenuDePage.put(pageId, page);
-
+		pageContents.put(pageId, page);
 		return pageId;
 	}
 
-	public void readPage(PageId pageId, ByteBuffer buff) {
-		ByteBuffer page = contenuDePage.get(pageId);
-		int copyLength = Math.min(buff.remaining(), pageSize);
+	public ByteBuffer readPage(PageId pageId) {
+		ByteBuffer page = pageContents.get(pageId);
+		if (page == null) {
+			// Handle case where page is not present
+			return null;
+		}
+
+		int copyLength = Math.min(page.remaining(), pageSize);
+		ByteBuffer resultBuffer = ByteBuffer.allocate(copyLength);
+		// Set position to 0 before putting data
+		page.position(0);
 		page.limit(copyLength);
-		buff.put(page);
-		page.rewind();
+		resultBuffer.put(page);
+		resultBuffer.flip();
+		return resultBuffer;
 	}
 
 	public void writePage(PageId pageId, ByteBuffer buff) {
-		ByteBuffer page = contenuDePage.get(pageId);
+		ByteBuffer page = pageContents.get(pageId);
+		if (page == null) {
+			// Handle case where page is not present
+			return;
+		}
+
 		int copyLength = Math.min(buff.remaining(), pageSize);
+		// Set position to 0 before putting data
+		buff.position(0);
 		buff.limit(copyLength);
 		page.put(buff);
-		page.rewind();
+		page.flip(); // Flip the page buffer
 	}
 
-	public void deallocPage(PageId pageId) {
-		pagesDesalloue.add(pageId);
-		contenuDePage.remove(pageId);
+	public void deallocatePage(PageId pageId) {
+		deallocatedPages.add(pageId);
+		pageContents.remove(pageId);
 	}
 
-	public int getCurrentCountAllocPages() {
-		return contenuDePage.size();
+	public int getCurrentAllocatedPageCount() {
+		return pageContents.size();
 	}
 
-	private int getMinFic() {
-		int minTailleFic = Integer.MAX_VALUE;
-		int numFic = 0;
+	private int getMinFile() {
+		int minFileSize = Integer.MAX_VALUE;
+		int fileNumber = 0;
 
-		for (int i = 0; i < tailleFichier.length; i++) {
-			if (tailleFichier[i] < minTailleFic) {
-				minTailleFic = tailleFichier[i];
-				numFic = i;
+		for (int i = 0; i < fileSize.length; i++) {
+			if (fileSize[i] < minFileSize) {
+				minFileSize = fileSize[i];
+				fileNumber = i;
 			}
 		}
 
-		return numFic;
+		return fileNumber;
 	}
 }
