@@ -1,65 +1,58 @@
 package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
-import java.util.List;
+import java.util.ArrayList;
 
 public class TableInfo {
-    private String nomRelation;
-    private int numColonnes;
-    private List<String> nomColonnes;
-    private List<String> typeColonnes;
+    private String nom_relation;
+    private int nb_colonnes;
+    private ArrayList<ColInfo> colInfoList;
+    private PageId headerPageId;
 
-    // private PageId headerPageId;
-
-    public TableInfo(String nomRelation, int numColonnes, List<String> nomColonnes, List<String> typeColonnes/*
-                                                                                                              * , PageId
-                                                                                                              * headerPageId
-                                                                                                              */) {
-        this.nomRelation = nomRelation;
-        this.numColonnes = numColonnes;
-        this.nomColonnes = nomColonnes;
-        this.typeColonnes = typeColonnes;
-
-        // this.headerPageId = headerPageId;
+    public TableInfo(String nom_relation, int nb_colonnes, PageId headerPageId) {
+        this.nom_relation = nom_relation;
+        this.nb_colonnes = nb_colonnes;
+        this.colInfoList = new ArrayList<>();
+        this.headerPageId = headerPageId;
     }
 
-    public String GetNomRelation() {
-        return nomRelation;
+    public TableInfo(String nom_relation, ArrayList<ColInfo> colInfoList, PageId headerPageId) {
+        this.nom_relation = nom_relation;
+        this.nb_colonnes = colInfoList.size();
+        this.colInfoList = colInfoList;
+        this.headerPageId = headerPageId;
     }
 
-    public void setNomRelation(String nomRelation) {
-        this.nomRelation = nomRelation;
+    // PREVOIR UN DEUXIEME CONSTRUCTEUR
+    public String getNom_relation() {
+        return nom_relation;
     }
 
-    public int getNumColonnes() {
-        return numColonnes;
+    public void setNom_relation(String nom_relation) {
+        this.nom_relation = nom_relation;
     }
 
-    public void setNumColonnes(int numColonnes) {
-        this.numColonnes = numColonnes;
+    public int getNb_colonnes() {
+        return nb_colonnes;
     }
 
-    public List<String> getNomColonnes() {
-        return nomColonnes;
+    public void setNb_colonnes(int nb_colonnes) {
+        this.nb_colonnes = nb_colonnes;
     }
 
-    public void setNomColonnes(List<String> nomColonnes) {
-        this.nomColonnes = nomColonnes;
+    public ArrayList<ColInfo> getColInfoList() {
+        return colInfoList;
     }
 
-    public List<String> getTypeColonnes() {
-        return typeColonnes;
+    public void setColInfoList(ArrayList<ColInfo> colInfoList) {
+        this.colInfoList = colInfoList;
     }
 
-    public void setTypeColonnes(List<String> typeColonnes) {
-        this.typeColonnes = typeColonnes;
+    public PageId getHeaderPagerId() {
+        return headerPageId;
     }
-    /*
-     * public PageId getHeaderPageId() {
-     * return headerPageId;
-     * }
-     * 
-     * public void setHeaderPageId(PageId headerPageId) {
-     * this.headerPageId = headerPageId;
-     * }
-     */
+
+    public void setHeaderPageId(PageId headerPageId) {
+        this.headerPageId = headerPageId;
+    }
+
 }

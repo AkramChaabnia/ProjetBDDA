@@ -2,36 +2,38 @@ package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.List;
 
 public class Record {
     private TableInfo tabInfo;
-    private List<String> recValues = new ArrayList<>();
+    private ArrayList<String> recvalues;
 
     public Record(TableInfo tabInfo) {
         this.tabInfo = tabInfo;
+        this.recvalues = new ArrayList<>();
     }
 
     public int writeToBuffer(byte[] buff, int pos) {
         int offset = pos;
 
-        for (String value : recValues) {
-            if (tabInfo.getTypeColonnes().get(recValues.indexOf(value)).startsWith("VARSTRING")) {
-                int length = Integer.parseInt(tabInfo.getTypeColonnes().get(recValues.indexOf(value)).substring(10,
-                        tabInfo.getTypeColonnes().get(recValues.indexOf(value)).length() - 1));
-                byte[] strBytes = value.getBytes();
-                System.arraycopy(strBytes, 0, buff, offset, strBytes.length);
+        for (String value : recvalues) {
+            String type = tabInfo.getColInfoList().get(recvalues.indexOf(value)).getType();
+            byte[] bytesToWrite;
+
+            if (type.startsWith("VARSTRING")) {
+                int length = Integer.parseInt(type.substring(10, type.length() - 1));
+                bytesToWrite = value.getBytes();
+                System.arraycopy(bytesToWrite, 0, buff, offset, bytesToWrite.length);
                 offset += length;
-            } else if (tabInfo.getTypeColonnes().get(recValues.indexOf(value)).equals("INT")) {
+            } else if (type.equals("INT")) {
                 int intValue = Integer.parseInt(value);
-                byte[] intBytes = ByteBuffer.allocate(4).putInt(intValue).array();
-                System.arraycopy(intBytes, 0, buff, offset, intBytes.length);
-                offset += 4;
-            } else if (tabInfo.getTypeColonnes().get(recValues.indexOf(value)).equals("FLOAT")) {
+                bytesToWrite = ByteBuffer.allocate(Integer.BYTES).putInt(intValue).array();
+                System.arraycopy(bytesToWrite, 0, buff, offset, bytesToWrite.length);
+                offset += Integer.BYTES;
+            } else if (type.equals("FLOAT")) {
                 float floatValue = Float.parseFloat(value);
-                byte[] floatBytes = ByteBuffer.allocate(4).putFloat(floatValue).array();
-                System.arraycopy(floatBytes, 0, buff, offset, floatBytes.length);
-                offset += 4;
+                bytesToWrite = ByteBuffer.allocate(Float.BYTES).putFloat(floatValue).array();
+                System.arraycopy(bytesToWrite, 0, buff, offset, bytesToWrite.length);
+                offset += Float.BYTES;
             }
         }
 
@@ -40,24 +42,28 @@ public class Record {
 
     public int readFromBuffer(byte[] buff, int pos) {
         int offset = pos;
+        recvalues.clear();
 
-        for (String colType : tabInfo.getTypeColonnes()) {
+        for (ColInfo colInfo : tabInfo.getColInfoList()) {
+            String colType = colInfo.getType();
+            byte[] bytesToRead;
+
             if (colType.startsWith("VARSTRING")) {
                 int length = Integer.parseInt(colType.substring(10, colType.length() - 1));
-                byte[] strBytes = new byte[length];
-                System.arraycopy(buff, offset, strBytes, 0, length);
-                recValues.add(new String(strBytes));
+                bytesToRead = new byte[length];
+                System.arraycopy(buff, offset, bytesToRead, 0, length);
+                recvalues.add(new String(bytesToRead));
                 offset += length;
             } else if (colType.equals("INT")) {
-                byte[] intBytes = new byte[4];
-                System.arraycopy(buff, offset, intBytes, 0, 4);
-                recValues.add(String.valueOf(ByteBuffer.wrap(intBytes).getInt()));
-                offset += 4;
+                bytesToRead = new byte[Integer.BYTES];
+                System.arraycopy(buff, offset, bytesToRead, 0, Integer.BYTES);
+                recvalues.add(String.valueOf(ByteBuffer.wrap(bytesToRead).getInt()));
+                offset += Integer.BYTES;
             } else if (colType.equals("FLOAT")) {
-                byte[] floatBytes = new byte[4];
-                System.arraycopy(buff, offset, floatBytes, 0, 4);
-                recValues.add(String.valueOf(ByteBuffer.wrap(floatBytes).getFloat()));
-                offset += 4;
+                bytesToRead = new byte[Float.BYTES];
+                System.arraycopy(buff, offset, bytesToRead, 0, Float.BYTES);
+                recvalues.add(String.valueOf(ByteBuffer.wrap(bytesToRead).getFloat()));
+                offset += Float.BYTES;
             }
         }
 
@@ -65,15 +71,24 @@ public class Record {
     }
 
     // a verifier particulierement le set on on veut ajouter juste une entree
-    public List<String> getRecValues() {
-        return recValues;
+    public TableInfo getTabInfo() {
+        return tabInfo;
     }
 
-    public void setRecValues(List<String> recValues) {
-        this.recValues = recValues;
+    public void setTabInfo(TableInfo tabInfo) {
+        this.tabInfo = tabInfo;
+    }
+
+    public ArrayList<String> getRecvalues() {
+        return recvalues;
+    }
+
+    public void setRecvalues(ArrayList<String> recvalues) {
+        this.recvalues = recvalues;
     }
 
     public void addValue(String value) {
-        this.recValues.add(value);
+        this.recvalues.add(value);
     }
+
 }

@@ -5,6 +5,10 @@ public class ColInfo {
     private String type;
 
     public ColInfo(String name, String type) {
+        if (!type.equals("INT") && !type.equals("FLOAT") && !type.startsWith("STRING")
+                && !type.startsWith("VARSTRING")) {
+            throw new IllegalArgumentException("Invalid type: " + type);
+        }
         this.name = name;
         this.type = type;
     }

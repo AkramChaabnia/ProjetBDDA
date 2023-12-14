@@ -1,20 +1,36 @@
 package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
-import java.util.List;
-
 public class TestRecord {
+	private static DataBaseInfo databaseInfo;
+	private static TableInfo tableInfo;
+
 	public static void main(String[] args) {
-		DataBaseInfo databaseInfo = new DataBaseInfo();
+		initDatabase();
+		createTable();
+		finishDatabase();
+		initDatabase();
+		testRecord();
+		finishDatabase();
+	}
 
+	private static void initDatabase() {
+		databaseInfo = DataBaseInfo.getInstance();
 		databaseInfo.init();
+	}
 
-		TableInfo tableInfo = new TableInfo("MaTable", 2, List.of("Colonne1", "Colonne2"), List.of("INT", "VARSTRING(10)"));
-		databaseInfo.addTableInfo(tableInfo);
+	private static void createTable() {
+		tableInfo = new TableInfo("MaTable", 2, new PageId(0, 0)); // Assuming PageId(0, 0) as an example
+		ColInfo col1 = new ColInfo("Colonne1", "INT");
+		ColInfo col2 = new ColInfo("Colonne2", "VARSTRING(10)");
+		tableInfo.getColInfoList().add(col1);
+		tableInfo.getColInfoList().add(col2);
+	}
 
+	private static void finishDatabase() {
 		databaseInfo.finish();
+	}
 
-		databaseInfo.init();
-
+	private static void testRecord() {
 		Record record = new Record(tableInfo);
 		record.addValue("42");
 		record.addValue("Hello");
@@ -28,8 +44,6 @@ public class TestRecord {
 
 		System.out.println("Ecriture: " + bytesWritten);
 		System.out.println("Lecture: " + bytesRead);
-		System.out.println("Record values: " + readRecord.getRecValues());
-
-		databaseInfo.finish();
+		System.out.println("Record values: " + readRecord.getRecvalues());
 	}
 }
