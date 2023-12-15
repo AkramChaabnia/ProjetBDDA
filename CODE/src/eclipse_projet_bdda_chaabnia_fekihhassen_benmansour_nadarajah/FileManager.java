@@ -23,24 +23,28 @@ public class FileManager {
     }
 
     public PageId createNewHeaderPage() throws IOException, PageNotFoundException {
-
         DiskManager dm = DiskManager.getInstance();
-        PageId newHeaderPageId = dm.allocPage();
-
+        PageId newHeaderPageId = dm.allocatePage();
+    
         BufferManager bm = BufferManager.getInstance();
         ByteBuffer headerPageBuffer = bm.getPage(newHeaderPageId);
-
+    
         headerPageBuffer.putInt(-1);
         headerPageBuffer.putInt(-1);
-
-        bm.freePage(newHeaderPageId, true);
-
+    
+      
+        int valDirty = 1; 
+    
+        bm.freePage(newHeaderPageId, valDirty);
+    
         return newHeaderPageId;
     }
+    
+    
 
     public PageId addDataPage(TableInfo tabInfo) throws IOException, PageNotFoundException {
         DiskManager dm = DiskManager.getInstance();
-        PageId newDataPageId = dm.allocPage();
+        PageId newDataPageId = dm.allocatePage();
 
         BufferManager bm = BufferManager.getInstance();
         ByteBuffer newDataPageBuffer = bm.getPage(newDataPageId);
@@ -50,7 +54,11 @@ public class FileManager {
             newDataPageBuffer.putInt(4 + i * 8, 0); // initialise les slots
             newDataPageBuffer.putInt(8 + i * 8, 0); // initialise les tailles
         }
-        bm.freePage(newDataPageId, true);
+
+        int valDirty = 1; 
+
+
+        bm.freePage(newDataPageId, valDirty);
 
         PageId headerPageId = tabInfo.getHeaderPageId();
         ByteBuffer headerPageBuffer = bm.getPage(headerPageId);
@@ -71,10 +79,10 @@ public class FileManager {
 
             lastPageBuffer.putInt(0, newDataPageId.getFileIdx());
             lastPageBuffer.putInt(4, newDataPageId.getPageIdx());
-            bm.freePage(lastPageId, true);
+            bm.freePage(lastPageId, valDirty);
         }
 
-        bm.freePage(headerPageId, true);
+        bm.freePage(headerPageId, valDirty);
         return newDataPageId;
     }
 
@@ -109,15 +117,15 @@ public class FileManager {
             }
 
             if (pageHasSpace) {
-                bm.freePage(headerPageId, false);
-                bm.freePage(dataPageId, false);
+                bm.freePage(headerPageId, valDirty);
+                bm.freePage(dataPageId, valDirty);
                 return dataPageId;
             }
 
-            bm.freePage(dataPageId, false);
+            bm.freePage(dataPageId, valDirty);
         }
 
-        bm.freePage(headerPageId, false);
+        bm.freePage(headerPageId, valDirty);
         return null;
     }
 
@@ -143,8 +151,10 @@ public class FileManager {
             }
         }
 
+        int valDirty = 1; 
+
         if (freeSlotIndex == -1) {
-            bm.freePage(pageId, false);
+            bm.freePage(pageId, valDirty);
             throw new IOException("Aucun emplacement libre sur la page de données.");
         }
 
@@ -155,7 +165,7 @@ public class FileManager {
         dataPageBuffer.position(recordStart);
         dataPageBuffer.put(recordBuffer);
 
-        bm.freePage(pageId, true);
+        bm.freePage(pageId, valDirty);
 
         RecordId recordId = new RecordId(pageId, freeSlotIndex);
         return recordId;
@@ -189,7 +199,8 @@ public class FileManager {
 
             return records;
         } finally {
-            bm.freePage(pageId, false);
+            int valDirty = 1; 
+            bm.freePage(pageId, valDirty);
         }
     }
 
@@ -210,7 +221,8 @@ public class FileManager {
 
             return dataPageIds;
         } finally {
-            bm.freePage(headerPageId, false);
+            int valDirty = 1; 
+            bm.freePage(headerPageId, valDirty);
         }
     }
 
@@ -235,7 +247,9 @@ public class FileManager {
         dataPageBuffer.putInt(DBParams.SGBDPageSize - (8 + (recordCount + 1) * 8), offset);
         dataPageBuffer.putInt(DBParams.SGBDPageSize - (8 + (recordCount + 1) * 8) + 4, writtenSize);
 
-        bm.freePage(dataPageId, true);
+        int valDirty = 1; 
+
+        bm.freePage(dataPageId, valDirty);
 
         ByteBuffer headerPageBuffer = bm.getPage(tabInfo.getHeaderPageId());
         int slotCount = (DBParams.SGBDPageSize - 8) / 8;
@@ -251,7 +265,7 @@ public class FileManager {
             }
         }
 
-        bm.freePage(tabInfo.getHeaderPageId(), true);
+        bm.freePage(tabInfo.getHeaderPageId(), valDirty);
 
         RecordId rId = new RecordId(dataPageId, recordCount + 1);
         return rId;
