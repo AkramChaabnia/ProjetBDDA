@@ -34,6 +34,20 @@ public class BufferManager {
 		}
 	}
 
+	public ByteBuffer getPage(PageId pageId) {
+		if (bufferPool.containsKey(pageId)) {
+			Frame frame = bufferPool.get(pageId);
+			frame.incrementerPinCount();
+			return frame.getBuffer();
+		} else {
+			
+			ByteBuffer pageData = DiskManager.getInstance().readPage(pageId);
+			Frame newFrame = new Frame(pageData);
+			bufferPool.put(pageId, newFrame);
+			return newFrame.getBuffer();
+		}
+	}
+	
 	public void freePage(PageId pageId, int valDirty) {
 		if (bufferPool.containsKey(pageId)) {
 			Frame frame = bufferPool.get(pageId);
