@@ -9,11 +9,11 @@ public class PageId {
         this.pageId = pageId;
     }
 
-    public int getFileId() {
+    public int getFileIdx() {
         return fileId;
     }
 
-    public int getPageId() {
+    public int getPageIdx() {
         return pageId;
     }
 

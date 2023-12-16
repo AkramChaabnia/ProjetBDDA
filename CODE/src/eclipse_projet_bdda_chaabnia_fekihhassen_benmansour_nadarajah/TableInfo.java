@@ -15,6 +15,10 @@ public class TableInfo {
         this.headerPageId = headerPageId;
     }
 
+    public TableInfo(PageId headerPageId) {
+        this.headerPageId = headerPageId;
+    }
+
     public TableInfo(String nom_relation, ArrayList<ColInfo> colInfoList, PageId headerPageId) {
         this.nom_relation = nom_relation;
         this.nb_colonnes = colInfoList.size();
@@ -47,7 +51,7 @@ public class TableInfo {
         this.colInfoList = colInfoList;
     }
 
-    public PageId getHeaderPagerId() {
+    public PageId getHeaderPageId() {
         return headerPageId;
     }
 
