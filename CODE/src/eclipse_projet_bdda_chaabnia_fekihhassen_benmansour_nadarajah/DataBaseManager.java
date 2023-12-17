@@ -16,12 +16,17 @@ public class DataBaseManager {
 
   public void init() {
     DataBaseInfo.getInstance().init();
-    BufferManager.getInstance().init(); // getPAge ou on cree une methode init()!!!!!!!
+    // BufferManager.getInstance().init(); // getPAge ou on cree une methode
+    // init()!!!!!!!
+    // DiskManager.getInstance().init(); // getPAge ou on cree une methode
+    // init()!!!!!!!
   }
 
   public void finish() {
     DataBaseInfo.getInstance().finish();
     BufferManager.getInstance().flushAll();
+    // DiskManager.getInstance().finish(); // getPAge ou on cree une methode
+    // finish()!!!!!!!
   }
 
   public void processCommand(String chaineCommande) {
@@ -37,7 +42,7 @@ public class DataBaseManager {
         }
         break;
       case "RESETDB":
-        ResetDBCommand resetDBCommand = new ResetDBCommand(chaineCommande);
+        ResetDBCommand resetDBCommand = new ResetDBCommand();
         resetDBCommand.execute();
         break;
       case "INSERT":
