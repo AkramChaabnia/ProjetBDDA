@@ -79,4 +79,11 @@ public class DataBaseInfo {
         }
         return false;
     }
+
+    public void reset() {
+        tableInfoList.clear();
+        compteur = 0;
+        System.out.println("DatabaseInfo reset.");
+    }
+
 }

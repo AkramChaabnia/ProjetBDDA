@@ -82,4 +82,13 @@ public class BufferManager {
 		bufferPool.clear();
 	}
 
+	public void reset() {
+		for (Frame frame : bufferPool.values()) {
+			frame.setPinCount(0);
+			frame.setDirty(false);
+			frame.setBuffer(ByteBuffer.allocate(DBParams.SGBDPageSize));
+		}
+		bufferPool.clear();
+	}
+
 }
