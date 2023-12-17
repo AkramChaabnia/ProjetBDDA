@@ -26,7 +26,6 @@ public class TableInfo {
         this.headerPageId = headerPageId;
     }
 
-    // PREVOIR UN DEUXIEME CONSTRUCTEUR
     public String getNom_relation() {
         return nom_relation;
     }

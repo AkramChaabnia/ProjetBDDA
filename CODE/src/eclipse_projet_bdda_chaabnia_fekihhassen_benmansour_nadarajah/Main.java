@@ -11,7 +11,7 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		// DBParams.DBPath = "../DB/";
+		// DBParams.DBPath = "DB//";
 		// DBParams.DBPath = args[0];
 
 		// DBParams.SGBDPageSize = 4096;
