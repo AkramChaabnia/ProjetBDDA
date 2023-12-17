@@ -48,13 +48,13 @@ public class BufferManager {
 		}
 	}
 
-	public void freePage(PageId pageId, int valDirty) {
+	public void freePage(PageId pageId, Boolean valDirty) {
 		if (bufferPool.containsKey(pageId)) {
 			Frame frame = bufferPool.get(pageId);
 			frame.decrementerPinCount();
 			;
 
-			if (valDirty == 1) {
+			if (valDirty == true) {
 				frame.setDirty(true);
 			}
 
