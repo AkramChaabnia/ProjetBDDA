@@ -2,7 +2,6 @@ package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
 import java.io.*;
 import java.util.ArrayList;
-import java.util.List;
 
 public class DataBaseInfo {
     private static DataBaseInfo instance;
@@ -70,5 +69,14 @@ public class DataBaseInfo {
 
     public int getCompteur() {
         return compteur;
+    }
+
+    public boolean tableExists(String tableName) {
+        for (TableInfo table : tableInfoList) {
+            if (table.getNom_relation().equals(tableName)) {
+                return true;
+            }
+        }
+        return false;
     }
 }
