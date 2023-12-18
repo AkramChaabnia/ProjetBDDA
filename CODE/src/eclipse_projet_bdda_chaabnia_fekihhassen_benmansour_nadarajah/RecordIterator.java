@@ -31,13 +31,15 @@ public class RecordIterator {
       int slotSize = dataPageBuffer.getInt(pageSize - (8 + (currentOffset + 1) * 8) + 4);
 
       ByteBuffer recordBuffer = ByteBuffer.allocate(slotSize);
+      int oldLimit = dataPageBuffer.limit();
       dataPageBuffer.position(slotStart);
       dataPageBuffer.limit(slotStart + slotSize);
       recordBuffer.put(dataPageBuffer);
-      recordBuffer.rewind();
+      dataPageBuffer.limit(oldLimit);
+      recordBuffer.flip();
 
       Record record = new Record(tabInfo);
-      record.readFromBuffer(recordBuffer, 0);
+      record.readFromBuffer(recordBuffer.array(), 0);
 
       currentOffset++;
       return record;
