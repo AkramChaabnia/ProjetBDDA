@@ -11,12 +11,12 @@ public class Main {
 
 	public static void main(String[] args) {
 
-		// DBParams.DBPath = "DB//";
+		DBParams.DBPath = "DB//";
 		// DBParams.DBPath = args[0];
 
-		// DBParams.SGBDPageSize = 4096;
-		// DBParams.DMFileCount = 4;
-		// DBParams.FrameCount = 2;
+		DBParams.SGBDPageSize = 4096;
+		DBParams.DMFileCount = 4;
+		DBParams.FrameCount = 2;
 
 		// Call the init method
 		DataBaseManager dbManager = DataBaseManager.getInstance();

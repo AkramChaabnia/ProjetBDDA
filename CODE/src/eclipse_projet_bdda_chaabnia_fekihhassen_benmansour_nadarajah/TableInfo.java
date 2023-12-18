@@ -15,14 +15,14 @@ public class TableInfo {
         this.headerPageId = headerPageId;
     }
 
-    public TableInfo(PageId headerPageId) {
-        this.headerPageId = headerPageId;
-    }
-
     public TableInfo(String nom_relation, ArrayList<ColInfo> colInfoList, PageId headerPageId) {
         this.nom_relation = nom_relation;
         this.nb_colonnes = colInfoList.size();
         this.colInfoList = colInfoList;
+        this.headerPageId = headerPageId;
+    }
+
+    public TableInfo(PageId headerPageId) {
         this.headerPageId = headerPageId;
     }
 

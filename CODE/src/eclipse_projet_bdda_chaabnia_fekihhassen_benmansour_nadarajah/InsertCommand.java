@@ -20,7 +20,7 @@ public class InsertCommand {
     public void execute() {
         TableInfo tableInfo = DataBaseInfo.getInstance().getTableInfo(nom_relation);
         if (tableInfo != null) {
-            // fileManager.insertIntoTable(tableInfo, values);
+            fileManager.insertIntoTable(tableInfo, values);
         } else {
             System.out.println("Table " + nom_relation + " does not exist.");
         }

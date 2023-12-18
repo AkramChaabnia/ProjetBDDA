@@ -9,6 +9,7 @@ public class CreateTableCommand {
   FileManager fileManager = FileManager.getInstance();
 
   public CreateTableCommand(String command) {
+
     String[] cmd = command.split(" ");
     this.nom_relation = cmd[2];
     this.colInfoList = new ArrayList<>();

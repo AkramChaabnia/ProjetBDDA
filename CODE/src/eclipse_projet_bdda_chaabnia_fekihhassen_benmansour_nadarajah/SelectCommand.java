@@ -15,7 +15,7 @@ public class SelectCommand {
   }
 
   public void execute() throws IOException, PageNotFoundException {
-    // TableInfo tableInfo = fileManager.getTableInfo(relationName);
+    TableInfo tableInfo = fileManager.getTableInfo(relationName);
     List<Record> records = fileManager.GetAllRecords(tableInfo);
 
     for (Record record : records) {

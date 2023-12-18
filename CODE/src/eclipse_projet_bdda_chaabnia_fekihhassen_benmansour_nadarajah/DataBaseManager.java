@@ -1,5 +1,7 @@
 package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
+import java.io.IOException;
+
 public class DataBaseManager {
 
   private static DataBaseManager instance = new DataBaseManager();
@@ -29,7 +31,7 @@ public class DataBaseManager {
     // finish()!!!!!!!
   }
 
-  public void processCommand(String chaineCommande) {
+  public void processCommand(String chaineCommande) throws IOException, PageNotFoundException {
     String[] commande = chaineCommande.split(" ");
 
     switch (commande[0]) {
