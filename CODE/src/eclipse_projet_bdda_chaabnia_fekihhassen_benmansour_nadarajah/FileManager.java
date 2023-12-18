@@ -160,37 +160,34 @@ public class FileManager {
     return recordId;
   }
 
-  public List<Record> getRecordsInDataPage(TableInfo tabInfo, PageId pageId)
-      throws IOException, PageNotFoundException {
-    List<Record> records = new ArrayList<>();
-    BufferManager bm = BufferManager.getInstance();
-    ByteBuffer dataPageBuffer = bm.getPage(pageId);
+  public List<Record> getRecordsInDataPage(TableInfo tabInfo, PageId pageId) throws IOException, PageNotFoundException {
+	    List<Record> records = new ArrayList<>();
+	    BufferManager bm = BufferManager.getInstance();
+	    byte[] dataPageBuffer = bm.getPage(pageId).array(); 
 
-    try {
-      int slotCount = (DBParams.SGBDPageSize - 8) / 8;
+	    try {
+	        int slotCount = (DBParams.SGBDPageSize - 8) / 8;
 
-      for (int i = 0; i < slotCount; i++) {
-        int slotStart = dataPageBuffer.getInt(4 + i * 8);
-        int slotSize = dataPageBuffer.getInt(8 + i * 8);
+	        for (int i = 0; i < slotCount; i++) {
+	            int slotStart = ByteBuffer.wrap(dataPageBuffer, 4 + i * 8, 4).getInt();
+	            int slotSize = ByteBuffer.wrap(dataPageBuffer, 8 + i * 8, 4).getInt();
 
-        if (slotStart > 0 && slotSize > 0) {
-          ByteBuffer recordBuffer = ByteBuffer.allocate(slotSize);
-          dataPageBuffer.position(slotStart);
-          dataPageBuffer.limit(slotStart + slotSize);
-          recordBuffer.put(dataPageBuffer);
-          recordBuffer.rewind();
+	            if (slotStart > 0 && slotSize > 0) {
+	                byte[] recordBuffer = new byte[slotSize];
+	                System.arraycopy(dataPageBuffer, slotStart, recordBuffer, 0, slotSize);
 
-          Record record = new Record(tabInfo);
-          record.readFromBuffer(recordBuffer, 0); // todo TABLEAU DE BYTE A LA PLACE !!!
-          records.add(record);
-        }
-      }
+	                Record record = new Record(tabInfo);
+	                record.readFromBuffer(recordBuffer, 0);
+	                records.add(record);
+	            }
+	        }
 
-      return records;
-    } finally {
-      bm.freePage(pageId, 0);
-    }
-  }
+	        return records;
+	    } finally {
+	        bm.freePage(pageId, 0);
+	    }
+	}
+
 
   public List<PageId> getDataPages(TableInfo tabInfo) throws IOException, PageNotFoundException {
     List<PageId> dataPageIds = new ArrayList<>();
@@ -267,10 +264,6 @@ public class FileManager {
     }
 
     return records;
-  }
-
-  public void reset(){
-    // todo 
   }
 
 }
