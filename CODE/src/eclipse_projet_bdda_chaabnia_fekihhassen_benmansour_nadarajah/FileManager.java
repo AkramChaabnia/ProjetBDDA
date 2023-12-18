@@ -269,4 +269,8 @@ public class FileManager {
     return records;
   }
 
+  public void reset(){
+    // todo 
+  }
+
 }
