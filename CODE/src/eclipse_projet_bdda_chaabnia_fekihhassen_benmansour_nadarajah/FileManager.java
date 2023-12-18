@@ -163,7 +163,7 @@ public class FileManager {
   public List<Record> getRecordsInDataPage(TableInfo tabInfo, PageId pageId) throws IOException, PageNotFoundException {
     List<Record> records = new ArrayList<>();
     BufferManager bm = BufferManager.getInstance();
-    byte[] dataPageBuffer = bm.getPage(pageId).array(); // Convert ByteBuffer to byte array
+    byte[] dataPageBuffer = bm.getPage(pageId).array();
 
     try {
       int slotCount = (DBParams.SGBDPageSize - 8) / 8;
