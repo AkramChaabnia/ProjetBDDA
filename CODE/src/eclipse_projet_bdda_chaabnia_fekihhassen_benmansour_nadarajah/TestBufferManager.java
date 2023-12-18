@@ -46,8 +46,10 @@ public class TestBufferManager {
 		System.out.println("Test 3: Flush All");
 		PageId pageId3 = new PageId(3, 3);
 		PageId pageId4 = new PageId(4, 4);
-		ByteBuffer buffer3 = bufferManager.getPage(pageId3, ByteBuffer.allocate(1024));
-		ByteBuffer buffer4 = bufferManager.getPage(pageId4, ByteBuffer.allocate(1024));
+		// ByteBuffer buffer3 = bufferManager.getPage(pageId3,
+		// ByteBuffer.allocate(1024));
+		// ByteBuffer buffer4 = bufferManager.getPage(pageId4,
+		// ByteBuffer.allocate(1024));
 		// ... Operations sur le Buffer ...
 		bufferManager.freePage(pageId3, 1);
 		bufferManager.freePage(pageId4, 0);

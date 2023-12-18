@@ -2,7 +2,6 @@ package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
-import java.util.NoSuchElementException;
 
 public class RecordIterator {
   private final TableInfo tabInfo;

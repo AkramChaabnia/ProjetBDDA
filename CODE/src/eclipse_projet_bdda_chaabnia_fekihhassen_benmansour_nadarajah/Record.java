@@ -11,30 +11,32 @@ public class Record {
     public Record(TableInfo tabInfo) {
         this.tabInfo = tabInfo;
         this.recvalues = new ArrayList<>();
-      
+
     }
 
     private int calculateSize() {
         int recordSize = 0;
 
-        for (int i = 0; i < tabInfo.getColInfoList().size(); i++) {
+        for (int i = 0; i < recvalues.size(); i++) {
             String colType = tabInfo.getColInfoList().get(i).getType();
 
-            switch (colType) {
-                case "INT":
-                    recordSize += Integer.BYTES;
-                    break;
-                case "FLOAT":
-                    recordSize += Float.BYTES;
-                    break;
-                case "STRING":
-                    recordSize += recvalues.size() > i ? recvalues.get(i).length() * Character.BYTES + Character.BYTES : 0;
-                    break;
-                case "VARSTRING":
-                    recordSize += recvalues.size() > i ? Integer.BYTES + recvalues.get(i).length() * Character.BYTES : 0;
-                    break;
-                default:
-                    throw new IllegalArgumentException("Type de colonne inconnu : " + colType);
+            if (colType.startsWith("VARSTRING")) {
+                int length = Integer.parseInt(colType.substring(10, colType.length() - 1));
+                recordSize += Integer.BYTES + recvalues.get(i).length() * Character.BYTES;
+            } else {
+                switch (colType) {
+                    case "INT":
+                        recordSize += Integer.BYTES;
+                        break;
+                    case "FLOAT":
+                        recordSize += Float.BYTES;
+                        break;
+                    case "STRING":
+                        recordSize += recvalues.get(i).length() * Character.BYTES + Character.BYTES;
+                        break;
+                    default:
+                        throw new IllegalArgumentException("Type de colonne inconnu : " + colType);
+                }
             }
         }
 
