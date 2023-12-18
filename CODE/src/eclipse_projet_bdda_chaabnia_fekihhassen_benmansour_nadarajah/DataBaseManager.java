@@ -21,18 +21,17 @@ public class DataBaseManager {
     DataBaseInfo.getInstance().init();
 
     // Initialisation de BufferManager, si nécessaire
-    BufferManager.getInstance().init();
+   // BufferManager.getInstance().init();
 
     // DiskManager.getInstance().init();
   }
 
-  public void finish() {
-    DataBaseInfo.getInstance().finish();
-    BufferManager.getInstance().flushAll();
-    // DiskManager.getInstance().finish(); // getPAge ou on cree une methode
-    // finish()!!!!!!!
-  }
 
+  public void finish() {
+    BufferManager.getInstance().flushAll();
+    DataBaseInfo.getInstance().finish();
+    // DiskManager.getInstance().finish(); 
+}
   public void processCommand(String chaineCommande) {
     try {
       String[] commande = chaineCommande.trim().toUpperCase().split("\\s+"); // ignorer la casse ??
