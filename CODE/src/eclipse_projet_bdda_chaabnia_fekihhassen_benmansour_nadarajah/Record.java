@@ -6,10 +6,39 @@ import java.util.ArrayList;
 public class Record {
     private TableInfo tabInfo;
     private ArrayList<String> recvalues;
+    private int size;
 
     public Record(TableInfo tabInfo) {
         this.tabInfo = tabInfo;
         this.recvalues = new ArrayList<>();
+        this.size = calculateSize();
+    }
+
+    private int calculateSize() {
+        int recordSize = 0;
+
+        for (int i = 0; i < tabInfo.getColInfoList().size(); i++) {
+            String colType = tabInfo.getColInfoList().get(i).getType();
+
+            switch (colType) {
+                case "INT":
+                    recordSize += Integer.BYTES;
+                    break;
+                case "FLOAT":
+                    recordSize += Float.BYTES;
+                    break;
+                case "STRING":
+                    recordSize += recvalues.get(i).length() * Character.BYTES + Character.BYTES;
+                    break;
+                case "VARSTRING":
+                    recordSize += Integer.BYTES + recvalues.get(i).length() * Character.BYTES;
+                    break;
+                default:
+                    throw new IllegalArgumentException("Type de colonne inconnu : " + colType);
+            }
+        }
+
+        return recordSize;
     }
 
     public int writeToBuffer(byte[] buff, int pos) {
