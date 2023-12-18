@@ -1,9 +1,11 @@
 package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
+import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 
 public class DiskManager {
@@ -107,5 +109,27 @@ public class DiskManager {
 		}
 
 		return fileNumber;
+	}
+
+	public void reset() {
+		Arrays.fill(fileSize, 0);
+		deallocatedPages.clear();
+		pageContents.clear();
+
+		try {
+			for (int i = 0; i < DBParams.DMFileCount; i++) {
+				String fileName = DBParams.DBPath + "f" + i + ".data";
+				File file = new File(fileName);
+
+				if (file.exists()) {
+					file.delete();
+				}
+
+				FileOutputStream fileOutputStream = new FileOutputStream(fileName);
+				fileOutputStream.close();
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
