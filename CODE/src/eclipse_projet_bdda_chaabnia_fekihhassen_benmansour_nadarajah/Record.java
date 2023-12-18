@@ -91,4 +91,9 @@ public class Record {
         this.recvalues.add(value);
     }
 
+    public int getSize() {
+		return size;
+	}
+
+    
 }
