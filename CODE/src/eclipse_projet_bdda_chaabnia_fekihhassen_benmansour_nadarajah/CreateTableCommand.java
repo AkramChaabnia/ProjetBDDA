@@ -1,7 +1,7 @@
 package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
+import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
 
 public class CreateTableCommand {
   private String nom_relation;
@@ -29,9 +29,12 @@ public class CreateTableCommand {
       System.out.println("Relation \"" + nom_relation + "\" already exists.");
       return;
     }
-    fileManager.createNewHeaderPage();
-    PageId headerPageId = fileManager.getHeaderPageId();
-    TableInfo tableInfo = new TableInfo(nom_relation, colInfoList, headerPageId);
-    databaseInfo.addTableInfo(tableInfo);
+    try {
+      PageId headerPageId = fileManager.createNewHeaderPage();
+      TableInfo tableInfo = new TableInfo(nom_relation, colInfoList, headerPageId);
+      databaseInfo.addTableInfo(tableInfo);
+    } catch (IOException | PageNotFoundException e) {
+      e.printStackTrace();
+    }
   }
 }
