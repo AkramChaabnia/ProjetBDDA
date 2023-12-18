@@ -181,7 +181,7 @@ public class FileManager {
           recordBuffer.rewind();
 
           Record record = new Record(tabInfo);
-          record.readFromBuffer(recordBuffer, 0);
+          record.readFromBuffer(recordBuffer, 0); // todo TABLEAU DE BYTE A LA PLACE !!!
           records.add(record);
         }
       }
