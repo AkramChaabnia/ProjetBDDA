@@ -11,7 +11,7 @@ public class Record {
     public Record(TableInfo tabInfo) {
         this.tabInfo = tabInfo;
         this.recvalues = new ArrayList<>();
-        this.size = calculateSize();
+      
     }
 
     private int calculateSize() {
@@ -28,10 +28,10 @@ public class Record {
                     recordSize += Float.BYTES;
                     break;
                 case "STRING":
-                    recordSize += recvalues.get(i).length() * Character.BYTES + Character.BYTES;
+                    recordSize += recvalues.size() > i ? recvalues.get(i).length() * Character.BYTES + Character.BYTES : 0;
                     break;
                 case "VARSTRING":
-                    recordSize += Integer.BYTES + recvalues.get(i).length() * Character.BYTES;
+                    recordSize += recvalues.size() > i ? Integer.BYTES + recvalues.get(i).length() * Character.BYTES : 0;
                     break;
                 default:
                     throw new IllegalArgumentException("Type de colonne inconnu : " + colType);
@@ -118,6 +118,7 @@ public class Record {
 
     public void addValue(String value) {
         this.recvalues.add(value);
+        this.size = calculateSize(); // on recalcule la taille apres chaque ajout
     }
 
     public int getSize() {
