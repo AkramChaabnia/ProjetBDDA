@@ -21,6 +21,7 @@ public class Main {
 
 		Scanner scanner = new Scanner(System.in);
 		String command;
+		String upperCaseCommand;
 		String[] commands = { "HELP", "EXIT", "CREATE RELATION <Relation> (c1:type,c2:type,...)", "RESETDB",
 				"INSERT INTO <Relation> VALUES (val1,val2)",
 				"SELECT * FROM <RELATION>", };
@@ -29,7 +30,8 @@ public class Main {
 			System.out.println("Bonjour, Veuillez saisir une commande ?\n(HELP pour l'aide et EXIT pour quitter)\n");
 			command = scanner.nextLine();
 
-			switch (command) {
+			upperCaseCommand = command.toUpperCase();
+			switch (upperCaseCommand) {
 				case "HELP":
 					System.out.println("Commandes disponibles : " + Arrays.toString(commands));
 					break;
@@ -41,7 +43,7 @@ public class Main {
 					dbManager.processCommand(command);
 					break;
 			}
-		} while (!command.equals("EXIT"));
+		} while (!upperCaseCommand.equals("EXIT"));
 
 		scanner.close();
 	}
