@@ -6,78 +6,38 @@ import java.util.ArrayList;
 public class Record {
     private TableInfo tabInfo;
     private ArrayList<String> recvalues;
-    private int size;
 
     public Record(TableInfo tabInfo) {
         this.tabInfo = tabInfo;
         this.recvalues = new ArrayList<>();
-        this.size = calculateSize();
     }
 
-    private int calculateSize() {
-        int recordSize = 0;
+    public int writeToBuffer(byte[] buff, int pos) {
+        int offset = pos;
 
-        for (int i = 0; i < tabInfo.getColInfoList().size(); i++) {
-            String colType = tabInfo.getColInfoList().get(i).getType();
+        for (String value : recvalues) {
+            String type = tabInfo.getColInfoList().get(recvalues.indexOf(value)).getType();
+            byte[] bytesToWrite;
 
-            switch (colType) {
-                case "INT":
-                    recordSize += Integer.BYTES;
-                    break;
-                case "FLOAT":
-                    recordSize += Float.BYTES;
-                    break;
-                case "STRING":
-                    recordSize += recvalues.get(i).length() * Character.BYTES + Character.BYTES;
-
-                    break;
-                case "VARSTRING":
-                    recordSize += Integer.BYTES + recvalues.get(i).length() * Character.BYTES;
-                    break;
-                default:
-                    throw new IllegalArgumentException("Type de colonne inconnu : " + colType);
+            if (type.startsWith("VARSTRING")) {
+                int length = Integer.parseInt(type.substring(10, type.length() - 1));
+                bytesToWrite = value.getBytes();
+                System.arraycopy(bytesToWrite, 0, buff, offset, bytesToWrite.length);
+                offset += length;
+            } else if (type.equals("INT")) {
+                int intValue = Integer.parseInt(value);
+                bytesToWrite = ByteBuffer.allocate(Integer.BYTES).putInt(intValue).array();
+                System.arraycopy(bytesToWrite, 0, buff, offset, bytesToWrite.length);
+                offset += Integer.BYTES;
+            } else if (type.equals("FLOAT")) {
+                float floatValue = Float.parseFloat(value);
+                bytesToWrite = ByteBuffer.allocate(Float.BYTES).putFloat(floatValue).array();
+                System.arraycopy(bytesToWrite, 0, buff, offset, bytesToWrite.length);
+                offset += Float.BYTES;
             }
         }
 
-        return recordSize;
-    }
-
-    public int writeToBuffer(ByteBuffer buff, int pos) {
-        // Positionne le curseur au début de l'écriture
-        buff.position(pos);
-
-        for (int i = 0; i < tabInfo.getColInfoList().size(); i++) {
-            String colType = tabInfo.getColInfoList().get(i).getType();
-            String value = recvalues.get(i);
-
-            switch (colType) {
-                case "INT":
-                    int intValue = Integer.parseInt(value);
-                    buff.putInt(intValue);
-                    break;
-                case "FLOAT":
-                    float floatValue = Float.parseFloat(value);
-                    buff.putFloat(floatValue);
-                    break;
-                case "STRING":
-                    for (char c : value.toCharArray()) {
-                        buff.putChar(c);
-                    }
-                    buff.putChar('\0');
-                    break;
-                case "VARSTRING":
-                    int length = value.length();
-                    buff.putInt(length);
-                    for (char c : value.toCharArray()) {
-                        buff.putChar(c);
-                    }
-                    break;
-                default:
-                    throw new IllegalArgumentException("type de colonne inconnu : " + colType);
-            }
-        }
-
-        return buff.position() - pos;
+        return offset - pos;
     }
 
     public int readFromBuffer(byte[] buff, int pos) {
@@ -129,10 +89,6 @@ public class Record {
 
     public void addValue(String value) {
         this.recvalues.add(value);
-    }
-
-    public int getSize() {
-        return size;
     }
 
 }
