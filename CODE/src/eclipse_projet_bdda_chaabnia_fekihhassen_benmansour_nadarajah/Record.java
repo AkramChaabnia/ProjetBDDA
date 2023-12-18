@@ -22,7 +22,7 @@ public class Record {
 
             if (colType.startsWith("VARSTRING")) {
                 int length = Integer.parseInt(colType.substring(10, colType.length() - 1));
-                recordSize += Integer.BYTES + recvalues.get(i).length() * Character.BYTES;
+                recordSize += Integer.BYTES + length * Character.BYTES;
             } else {
                 switch (colType) {
                     case "INT":
