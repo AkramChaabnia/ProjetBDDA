@@ -2,13 +2,14 @@ package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
 import java.io.IOException;
 import java.util.Arrays;
-import java.util.Scanner;
+import java.util.List;
+import java.util.Iterator;
 
 public class Main {
 
 	public static void main(String[] args) throws IOException, PageNotFoundException {
 
-		DBParams.DBPath = "DB//";
+		DBParams.DBPath = "BD//";
 		// DBParams.DBPath = args[0];
 
 		DBParams.SGBDPageSize = 4096;
@@ -19,16 +20,35 @@ public class Main {
 		DataBaseManager dbManager = DataBaseManager.getInstance();
 		dbManager.init();
 
-		Scanner scanner = new Scanner(System.in);
 		String command;
 		String upperCaseCommand;
 		String[] commands = { "HELP", "EXIT", "CREATE RELATION <Relation> (c1:type,c2:type,...)", "RESETDB",
 				"INSERT INTO <Relation> VALUES (val1,val2)",
 				"SELECT * FROM <RELATION>", };
 
+		List<String> testCommands = Arrays.asList(
+				"RESETDB",
+				"CREATE TABLE R (C1:INT,C2:VARSTRING(3),C3:INT)",
+				"INSERT INTO R VALUES (1,aab,2)",
+				"INSERT INTO R VALUES (2,ab,2)",
+				"INSERT INTO R VALUES (1,agh,1)",
+				"SELECT * FROM R",
+				"SELECT * FROM R WHERE C1=1",
+				"SELECT * FROM R WHERE C3=1",
+				"SELECT * FROM R WHERE C1=1 AND C3=2",
+				"SELECT * FROM R WHERE C1<2",
+				"EXIT");
+
+		Iterator<String> testCommandIterator = testCommands.iterator();
+
 		do {
-			System.out.println("Bonjour, Veuillez saisir une commande ?\n(HELP pour l'aide et EXIT pour quitter)\n");
-			command = scanner.nextLine();
+			if (testCommandIterator.hasNext()) {
+				command = testCommandIterator.next();
+			} else {
+				break;
+			}
+
+			System.out.println("Executing command: " + command);
 
 			upperCaseCommand = command.toUpperCase();
 			switch (upperCaseCommand) {
@@ -44,7 +64,5 @@ public class Main {
 					break;
 			}
 		} while (!upperCaseCommand.equals("EXIT"));
-
-		scanner.close();
 	}
 }
