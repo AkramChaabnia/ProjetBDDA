@@ -118,8 +118,13 @@ public class Record {
         this.recvalues = recvalues;
     }
 
-    public void addValue(String value) {
-        this.recvalues.add(value);
+    // public void addValue(String value) {
+    // this.recvalues.add(value);
+    // this.size = calculateSize(); // on recalcule la taille apres chaque ajout
+    // }
+
+    public void addValue(Object value) {
+        this.recvalues.add(String.valueOf(value));
         this.size = calculateSize(); // on recalcule la taille apres chaque ajout
     }
 

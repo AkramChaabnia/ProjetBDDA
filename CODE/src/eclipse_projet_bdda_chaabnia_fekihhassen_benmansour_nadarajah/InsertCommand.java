@@ -26,23 +26,44 @@ public class InsertCommand {
         }
     }
 
-
-    public void execute() {
-        try {
-            TableInfo tableInfo = DataBaseInfo.getInstance().getTableInfo(nomRelation);
-            if (tableInfo == null) {
-                throw new IllegalArgumentException("Table non trouvée : " + nomRelation);
-            }
-
-
-            Record record = new Record(tableInfo);
-            for (String value : values) {
-                record.addValue(value);
-            }
-
-            // inserer record ici?
-        } catch (Exception e) {
-            System.out.println("Erreur lors de l'exécution de la commande INSERT : " + e.getMessage());
+    public void execute() throws Exception {
+        TableInfo tableInfo = DataBaseInfo.getInstance().getTableInfo(nomRelation);
+        if (tableInfo == null) {
+            throw new IllegalArgumentException("Table non trouvée : " + nomRelation);
         }
+
+        if (tableInfo.getNb_colonnes() != values.size()) {
+            throw new IllegalArgumentException(
+                    "Le nombre de valeurs fournies ne correspond pas au nombre de colonnes dans la table");
+        }
+
+        Record record = new Record(tableInfo);
+        for (int i = 0; i < values.size(); i++) {
+            String value = values.get(i);
+            String colType = tableInfo.getColInfoList().get(i).getType();
+            switch (colType.toUpperCase()) {
+                case "INT":
+                    record.addValue(Integer.parseInt(value));
+                    System.out.println("Added INT value: " + value);
+                    break;
+                case "FLOAT":
+                    record.addValue(Float.parseFloat(value));
+                    System.out.println("Added FLOAT value: " + value);
+                    break;
+                case "STRING":
+                    record.addValue(value);
+                    System.out.println("Added STRING value: " + value);
+                    break;
+                default:
+                    if (colType.toUpperCase().startsWith("VARSTRING")) {
+                        record.addValue(value);
+                        System.out.println("Added VARSTRING value: " + value);
+                    } else {
+                        throw new IllegalArgumentException("Type de colonne non supporté : " + colType);
+                    }
+            }
+        }
+
+        FileManager.getInstance().InsertRecordIntoTable(record);
     }
 }
