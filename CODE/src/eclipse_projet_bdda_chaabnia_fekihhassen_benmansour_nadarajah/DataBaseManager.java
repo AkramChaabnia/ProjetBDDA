@@ -21,9 +21,8 @@ public class DataBaseManager {
     DataBaseInfo.getInstance().init();
 
     // Initialisation de BufferManager, si nécessaire
-   // BufferManager.getInstance().init();
+   BufferManager.getInstance().init();
 
-    // DiskManager.getInstance().init();
   }
 
 

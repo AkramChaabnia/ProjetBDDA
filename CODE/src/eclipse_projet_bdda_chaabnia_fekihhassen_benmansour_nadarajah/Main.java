@@ -57,7 +57,7 @@ public class Main {
 					break;
 				case "EXIT":
 					System.out.println("Au revoir!\n");
-					dbManager.finish();
+					// dbManager.finish();
 					break;
 				default:
 					dbManager.processCommand(command);

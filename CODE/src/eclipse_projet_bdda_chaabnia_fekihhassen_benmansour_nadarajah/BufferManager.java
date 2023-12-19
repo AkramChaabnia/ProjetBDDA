@@ -19,12 +19,11 @@ public class BufferManager {
 		return instance;
 	}
 
-	public void init() {  
-        bufferPool.clear();
-    }
+	public void init() {
+		bufferPool.clear();
+		// DiskManager.getInstance().init();
+	}
 
-
-	
 	public ByteBuffer getPage(PageId pageId, ByteBuffer buff) {
 		if (bufferPool.containsKey(pageId)) {
 			Frame frame = bufferPool.get(pageId);

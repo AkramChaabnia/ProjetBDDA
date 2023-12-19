@@ -268,7 +268,7 @@ public class FileManager {
   public List<Record> GetAllRecords(TableInfo tabInfo) throws IOException, PageNotFoundException {
     List<Record> records = new ArrayList<>();
     List<PageId> dataPageIds = getDataPages(tabInfo);
-    // BufferManager bm = BufferManager.getInstance();
+    BufferManager bm = BufferManager.getInstance();
 
     for (PageId dataPageId : dataPageIds) {
       List<Record> pageRecords = getRecordsInDataPage(tabInfo, dataPageId);

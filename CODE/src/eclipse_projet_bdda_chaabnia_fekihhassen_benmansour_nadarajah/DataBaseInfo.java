@@ -39,13 +39,13 @@ public class DataBaseInfo {
     }
 
     private void readFromFile() {
-        try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream("BD\\DBInfo.save"))) {
-            File file = new File("DBInfo.save");
-            if (file.exists()) {
+        File file = new File(DBParams.DBPath + "\\DBInfo.save");
+        if (file.exists()) {
+            try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
                 tableInfoList = (ArrayList<TableInfo>) ois.readObject();
+            } catch (IOException | ClassNotFoundException e) {
+                e.printStackTrace();
             }
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
         }
     }
 
