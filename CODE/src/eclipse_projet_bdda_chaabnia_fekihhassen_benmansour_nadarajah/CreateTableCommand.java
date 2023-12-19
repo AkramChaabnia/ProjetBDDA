@@ -24,6 +24,10 @@ public class CreateTableCommand {
         }
         String colName = colInfo[0];
         String colType = colInfo[1];
+        if (!colType.equalsIgnoreCase("INT") && !colType.equalsIgnoreCase("FLOAT")
+            && !colType.equalsIgnoreCase("STRING") && !colType.toUpperCase().startsWith("VARSTRING")) {
+          throw new IllegalArgumentException("Type de colonne non supporté : " + colType);
+        }
         ColInfo col = new ColInfo(colName, colType);
         colInfoList.add(col);
       }
@@ -42,9 +46,10 @@ public class CreateTableCommand {
       PageId headerPageId = fileManager.createNewHeaderPage();
       TableInfo tableInfo = new TableInfo(nom_relation, colInfoList, headerPageId);
       databaseInfo.addTableInfo(tableInfo);
+      System.out.println("Table \"" + nom_relation + "\" has been created successfully.");
+      tableInfo.printTableInfo();
     } catch (IOException | PageNotFoundException e) {
-      e.printStackTrace();
+      System.out.println("Erreur lors de la création de la table : " + e.getMessage());
     }
   }
-
 }

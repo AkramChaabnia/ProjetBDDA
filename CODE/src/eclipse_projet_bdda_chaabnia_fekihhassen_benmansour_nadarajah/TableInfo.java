@@ -58,4 +58,13 @@ public class TableInfo {
         this.headerPageId = headerPageId;
     }
 
+    public void printTableInfo() {
+        System.out.println("Table Name: " + nom_relation);
+        System.out.println("Number of Columns: " + nb_colonnes);
+        System.out.println("Columns:");
+        for (ColInfo colInfo : colInfoList) {
+            System.out.println("  Name: " + colInfo.getName() + ", Type: " + colInfo.getType());
+        }
+    }
+
 }
