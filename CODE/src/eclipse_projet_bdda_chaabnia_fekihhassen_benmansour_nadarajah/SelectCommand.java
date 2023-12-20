@@ -81,7 +81,7 @@ public class SelectCommand {
       TableInfo tableInfo = DataBaseInfo.getInstance().getTableInfo(relationName);
 
       if (tableInfo == null) {
-        System.out.println("Table \"" + relationName + "\" does not exist.");
+        System.out.println("La Table \"" + relationName + "\" n'existe pas.");
         return;
       }
 
