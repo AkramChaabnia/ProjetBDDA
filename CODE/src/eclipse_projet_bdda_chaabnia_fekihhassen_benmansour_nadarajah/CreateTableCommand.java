@@ -59,7 +59,7 @@ public class CreateTableCommand {
     DataBaseInfo databaseInfo = DataBaseInfo.getInstance();
 
     if (databaseInfo.tableExists(nom_relation)) {
-      System.out.println("Relation \"" + nom_relation + "\" already exists.");
+      System.out.println("Relation \"" + nom_relation + "\" existe déjà.");
       return;
     }
     try {
@@ -67,7 +67,7 @@ public class CreateTableCommand {
       PageId headerPageId = fileManager.createNewHeaderPage();
       TableInfo tableInfo = new TableInfo(nom_relation, colInfoList, headerPageId);
       databaseInfo.addTableInfo(tableInfo);
-      System.out.println("Table \"" + nom_relation + "\" has been created successfully.");
+      System.out.println("Table \"" + nom_relation + "\" a bien été créé avec succès.");
       tableInfo.printTableInfo();
 
     } catch (IOException | PageNotFoundException e) {
