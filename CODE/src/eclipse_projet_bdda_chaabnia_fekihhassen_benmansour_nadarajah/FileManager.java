@@ -86,12 +86,13 @@ public class FileManager {
     BufferManager bm = BufferManager.getInstance();
     ByteBuffer newDataPageBuffer = bm.getPage(newDataPageId);
 
-    // Initialize the new data page
-    int slotCount = (DBParams.SGBDPageSize - 4) / 8; // Calculate total slots based on available space
+    // initialise la nouvelle page de données
+    int slotCount = (DBParams.SGBDPageSize - 4) / 8; // calcule le nombre total d'emplacements en fonction de l'espace
+                                                     // disponible
 
     for (int i = 0; i < slotCount; i++) {
-      newDataPageBuffer.putInt(4 + i * 8, 0); // Initialize slots
-      newDataPageBuffer.putInt(8 + i * 8, 0); // Initialize sizes
+      newDataPageBuffer.putInt(4 + i * 8, 0); // initialise slots
+      newDataPageBuffer.putInt(8 + i * 8, 0); // initialise sizes
     }
     bm.freePage(newDataPageId, 1);
 
@@ -265,11 +266,11 @@ public class FileManager {
    */
   public List<Record> getRecordsInDataPage(TableInfo tabInfo, PageId pageId) throws IOException, PageNotFoundException {
     if (tabInfo == null) {
-      System.out.println("tabInfo is null");
+      System.out.println("tabInfo est null");
       return Collections.emptyList();
     }
     if (pageId == null) {
-      System.out.println("pageId is null");
+      System.out.println("pageId est null");
       return Collections.emptyList();
     }
 
@@ -277,7 +278,7 @@ public class FileManager {
     BufferManager bm = BufferManager.getInstance();
     byte[] dataPageBuffer = bm.getPage(pageId).array();
     if (dataPageBuffer == null) {
-      System.out.println("dataPageBuffer is null");
+      System.out.println("dataPageBuffer est null");
       return Collections.emptyList();
     }
 
@@ -317,7 +318,7 @@ public class FileManager {
    */
   public List<PageId> getDataPages(TableInfo tabInfo) throws IOException, PageNotFoundException {
     if (tabInfo == null) {
-      System.out.println("tabInfo is null");
+      System.out.println("tabInfo est null");
       return Collections.emptyList();
     }
 
@@ -326,7 +327,7 @@ public class FileManager {
     PageId headerPageId = tabInfo.getHeaderPageId();
     ByteBuffer headerPageBuffer = bm.getPage(headerPageId);
     if (headerPageBuffer == null) {
-      System.out.println("headerPageBuffer is null");
+      System.out.println("headerPageBuffer est null");
       return Collections.emptyList();
     }
 
@@ -362,9 +363,9 @@ public class FileManager {
 
     if (dataPageId == null) {
       dataPageId = addDataPage(tabInfo);
-      System.out.println("Added new data page: " + dataPageId);
+      System.out.println("Ajout d'une nouvelle page de données: " + dataPageId);
     } else {
-      System.out.println("Found free data page: " + dataPageId);
+      System.out.println("Page de données free trouvées: " + dataPageId);
     }
 
     ByteBuffer dataPageBuffer = bm.getPage(dataPageId);

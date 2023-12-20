@@ -71,7 +71,7 @@ public class InsertCommand {
             }
 
             Record record = new Record(tableInfo);
-            
+
             for (int i = 0; i < values.size(); i++) {
 
                 String value = values.get(i);
@@ -102,7 +102,7 @@ public class InsertCommand {
 
             FileManager.getInstance().InsertRecordIntoTable(record);
         } catch (Exception e) {
-            System.out.println("An exception occurred while executing the INSERT command.");
+            System.out.println("Une exception s'est produite lors de l'exécution de la commande INSERT.");
             e.printStackTrace();
         }
     }
