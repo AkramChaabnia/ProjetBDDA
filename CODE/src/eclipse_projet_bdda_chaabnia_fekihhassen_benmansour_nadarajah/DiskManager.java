@@ -40,14 +40,19 @@ public class DiskManager {
 		PageId pageId = null;
 
 		if (!deallocatedPages.isEmpty()) {
-			pageId = deallocatedPages.iterator().next();
-			deallocatedPages.remove(pageId);
+			pageId = deallocatedPages.remove(0); // Reusing deallocated page
 		} else {
 			int fileNumber = getMinFile();
 			int pageNumber = fileSize[fileNumber] / pageSize;
+
+			// Check for file space limit
+			if (fileSize[fileNumber] + pageSize > fileSize[fileNumber + 1]) {
+				fileNumber++;
+				pageNumber = 0;
+			}
+
 			pageId = new PageId(fileNumber, pageNumber);
-			// Increment the page count
-			fileSize[fileNumber] += pageSize;
+			fileSize[fileNumber] += pageSize; // Increment the page count
 		}
 
 		ByteBuffer page = ByteBuffer.allocate(pageSize);
@@ -94,8 +99,23 @@ public class DiskManager {
 	}
 
 	public void deallocatePage(PageId pageId) {
-		deallocatedPages.add(pageId);
-		pageContents.remove(pageId);
+		if (pageContents.containsKey(pageId)) {
+			deallocatedPages.add(pageId); // Adding deallocated page
+			pageContents.remove(pageId);
+			System.out.println("Deallocated page with id: " + pageId);
+
+			// Additional logic to clear remnants or inconsistencies
+			// Clearing any remnants or performing necessary cleanup after deallocation
+			// This might involve resetting the ByteBuffer or marking the space as free
+			// to avoid future data corruption or inconsistencies
+			ByteBuffer clearedBuffer = ByteBuffer.allocate(pageSize);
+			pageContents.put(pageId, clearedBuffer);
+		} else {
+			System.err.println("Page with id " + pageId + " not found for deallocation!");
+			// Handle the case where the page to deallocate is not found
+			// This might involve throwing an exception or logging the issue
+		}
+
 	}
 
 	public int getCurrentAllocatedPageCount() {
