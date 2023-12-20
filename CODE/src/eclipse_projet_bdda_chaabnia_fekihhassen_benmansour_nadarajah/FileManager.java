@@ -3,6 +3,7 @@ package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -266,11 +267,11 @@ public class FileManager {
    */
   public List<Record> getRecordsInDataPage(TableInfo tabInfo, PageId pageId) throws IOException, PageNotFoundException {
     if (tabInfo == null) {
-      System.out.println("tabInfo est null");
+      System.out.println("tabInfo is null");
       return Collections.emptyList();
     }
     if (pageId == null) {
-      System.out.println("pageId est null");
+      System.out.println("pageId is null");
       return Collections.emptyList();
     }
 
@@ -278,7 +279,7 @@ public class FileManager {
     BufferManager bm = BufferManager.getInstance();
     byte[] dataPageBuffer = bm.getPage(pageId).array();
     if (dataPageBuffer == null) {
-      System.out.println("dataPageBuffer est null");
+      System.out.println("dataPageBuffer is null");
       return Collections.emptyList();
     }
 
@@ -289,13 +290,19 @@ public class FileManager {
         int slotStart = ByteBuffer.wrap(dataPageBuffer, 4 + i * 8, 4).getInt();
         int slotSize = ByteBuffer.wrap(dataPageBuffer, 8 + i * 8, 4).getInt();
 
+        System.out.println("Slot " + i + ": Start = " + slotStart + ", Size = " + slotSize);
+
         if (slotStart > 0 && slotSize > 0) {
           byte[] recordBuffer = new byte[slotSize];
           System.arraycopy(dataPageBuffer, slotStart, recordBuffer, 0, slotSize);
 
+          System.out.println("Record Buffer: " + Arrays.toString(recordBuffer));
+
           Record record = new Record(tabInfo);
           record.readFromBuffer(recordBuffer, 0);
           records.add(record);
+
+          System.out.println("Added Record: " + record);
         }
       }
 
@@ -318,7 +325,7 @@ public class FileManager {
    */
   public List<PageId> getDataPages(TableInfo tabInfo) throws IOException, PageNotFoundException {
     if (tabInfo == null) {
-      System.out.println("tabInfo est null");
+      System.out.println("tabInfo is null");
       return Collections.emptyList();
     }
 
@@ -327,17 +334,20 @@ public class FileManager {
     PageId headerPageId = tabInfo.getHeaderPageId();
     ByteBuffer headerPageBuffer = bm.getPage(headerPageId);
     if (headerPageBuffer == null) {
-      System.out.println("headerPageBuffer est null");
+      System.out.println("headerPageBuffer is null");
       return Collections.emptyList();
     }
 
     try {
       int numDataPages = headerPageBuffer.getInt(0);
+      System.out.println("Number of data pages: " + numDataPages);
+
       for (int i = 0; i < numDataPages; i++) {
         int dataPageFileIdx = headerPageBuffer.getInt(4 + i * 12);
         int dataPagePageIdx = headerPageBuffer.getInt(8 + i * 12);
         PageId dataPageId = new PageId(dataPageFileIdx, dataPagePageIdx);
         dataPageIds.add(dataPageId);
+        System.out.println("Added data page: " + dataPageId);
       }
 
       return dataPageIds;
@@ -405,6 +415,12 @@ public class FileManager {
         break;
       }
     }
+
+    System.out.println("Inserted Record Details:");
+    System.out.println("Table: " + record.getTabInfo().getNom_relation());
+    System.out.println("Record Size: " + record.getSize());
+    System.out.println("Record Contents:");
+    record.printRecordDetails(); // Create a method in Record class to print its details
 
     headerPageBuffer.clear();
     headerPageBuffer.put(headerPageArray);

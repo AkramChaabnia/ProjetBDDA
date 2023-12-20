@@ -16,7 +16,7 @@ public class SelectCommand {
   private ArrayList<SelectCondition> conditions; // New field to store the conditions
   private boolean condition = false;
 
-    /**
+  /**
    * Crée une instance de la commande SELECT en analysant la commande fournie.
    *
    * @param command La commande SELECT sous forme de chaîne de caractères.
@@ -59,10 +59,32 @@ public class SelectCommand {
   }
 
   private SelectCondition parseEachCondition(String conditionStr) {
-    String[] parts = conditionStr.split("=|<|>|<=|>=|<>");
+    String[] parts = conditionStr.split("=|<|>|<=|>=|<>", 2); // Split only on the first occurrence
+    if (parts.length < 2) {
+      // Handle invalid condition
+      throw new IllegalArgumentException("Invalid condition: " + conditionStr);
+    }
+
     String columnName = parts[0].trim();
-    String value = parts[1].trim();
-    String operator = conditionStr.substring(columnName.length(), conditionStr.length() - value.length()).trim();
+    String rest = parts[1].trim();
+
+    // Extract the operator
+    String operator = "";
+    if (conditionStr.contains("=")) {
+      operator = "=";
+    } else if (conditionStr.contains("<>")) {
+      operator = "<>";
+    } else if (conditionStr.contains("<=")) {
+      operator = "<=";
+    } else if (conditionStr.contains(">=")) {
+      operator = ">=";
+    } else if (conditionStr.contains("<")) {
+      operator = "<";
+    } else if (conditionStr.contains(">")) {
+      operator = ">";
+    }
+
+    String value = rest.substring(operator.length()).trim();
 
     return new SelectCondition(columnName, operator, value);
   }
@@ -90,11 +112,15 @@ public class SelectCommand {
       System.out.println(
           "Column names = " + tableInfo.getColInfoList().stream().map(ColInfo::getName).collect(Collectors.toList()));
       System.out.println("Header page id = " + tableInfo.getHeaderPageId());
-      System.out.println("Number of records = " + fileManager.GetAllRecords(tableInfo).size());
-      List<Record> records = fileManager.GetAllRecords(tableInfo);
+
+      // Get all records using fileManager
+      List<Record> allRecords = fileManager.GetAllRecords(tableInfo);
+      System.out.println("Number of records fetched from fileManager = " + allRecords.size());
+
+      List<Record> records = new ArrayList<>(allRecords);
 
       if (this.condition) {
-        System.out.println("Filtering records based on conditions...");
+        System.out.println("Applying conditions...");
         records = records.stream()
             .filter(record -> {
               System.out.println("Checking conditions for record: " + record);
@@ -106,19 +132,26 @@ public class SelectCommand {
       }
 
       System.out.println("Printing records...");
-      for (Record record : records) {
-        ArrayList<String> values = record.getRecvalues();
-        for (String value : values) {
-          System.out.print(value + " ; ");
-        }
-        System.out.println(".");
-      }
+      printRecords(records);
 
       System.out.println("Total records = " + records.size());
     } catch (IOException e) {
       System.out.println("An IOException occurred while executing the SELECT command: " + e.getMessage());
     } catch (PageNotFoundException e) {
       System.out.println("A PageNotFoundException occurred while executing the SELECT command: " + e.getMessage());
+    }
+  }
+
+  private void printRecords(List<Record> records) {
+    System.out.println("Printing records that satisfy the conditions...");
+    for (Record record : records) {
+      if (satisfiesConditions(record)) {
+        ArrayList<String> values = record.getRecvalues();
+        for (String value : values) {
+          System.out.print(value + " ; ");
+        }
+        System.out.println(".");
+      }
     }
   }
 

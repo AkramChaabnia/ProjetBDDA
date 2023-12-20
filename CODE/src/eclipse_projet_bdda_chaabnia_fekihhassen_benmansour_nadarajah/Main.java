@@ -1,6 +1,5 @@
 package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
-import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Iterator;
@@ -38,7 +37,6 @@ public class Main {
 					"SELECT * FROM R WHERE C1=1 AND C3=2",
 					"SELECT * FROM R WHERE C1<2",
 					"EXIT");
-
 			Iterator<String> testCommandIterator = testCommands.iterator();
 
 			do {
@@ -64,7 +62,9 @@ public class Main {
 						break;
 				}
 			} while (!upperCaseCommand.equals("EXIT"));
-		} catch (Exception e) {
+		} catch (
+
+		Exception e) {
 			e.printStackTrace();
 		}
 	}

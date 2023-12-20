@@ -3,7 +3,6 @@ package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
-
 /**
  * Représente un enregistrement de données associé à une table.
  */
@@ -24,7 +23,7 @@ public class Record {
 
     }
 
-     /**
+    /**
      * Calcule la taille de l'enregistrement en octets.
      *
      * @return La taille de l'enregistrement.
@@ -132,7 +131,7 @@ public class Record {
                 offset += Integer.BYTES;
 
             } else if (colType.equals("FLOAT")) {
-                
+
                 bytesToRead = new byte[Float.BYTES];
                 System.arraycopy(buff, offset, bytesToRead, 0, Float.BYTES);
                 recvalues.add(String.valueOf(ByteBuffer.wrap(bytesToRead).getFloat()));
@@ -203,6 +202,13 @@ public class Record {
      */
     public int getSize() {
         return size;
+    }
+
+    public void printRecordDetails() {
+        System.out.println("Record Details:");
+        for (String value : recvalues) {
+            System.out.println("Value: " + value);
+        }
     }
 
 }
