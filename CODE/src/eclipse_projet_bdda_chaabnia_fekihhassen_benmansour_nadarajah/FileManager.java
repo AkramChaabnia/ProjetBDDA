@@ -45,10 +45,12 @@ public class FileManager {
     BufferManager bm = BufferManager.getInstance();
     ByteBuffer newDataPageBuffer = bm.getPage(newDataPageId);
 
-    // initialise la nouvelle page de donnees
-    for (int i = 0; i < DBParams.SGBDPageSize / 8; i++) {
-      newDataPageBuffer.putInt(4 + i * 8, 0); // initialise les slots
-      newDataPageBuffer.putInt(8 + i * 8, 0); // initialise les tailles
+    // Initialize the new data page
+    int slotCount = (DBParams.SGBDPageSize - 4) / 8; // Calculate total slots based on available space
+
+    for (int i = 0; i < slotCount; i++) {
+      newDataPageBuffer.putInt(4 + i * 8, 0); // Initialize slots
+      newDataPageBuffer.putInt(8 + i * 8, 0); // Initialize sizes
     }
     bm.freePage(newDataPageId, 1);
 
@@ -64,9 +66,15 @@ public class FileManager {
     } else {
       PageId lastPageId = new PageId(firstFreePageFileIdx, firstFreePagePageIdx);
       ByteBuffer lastPageBuffer = bm.getPage(lastPageId);
-      while (lastPageBuffer.getInt(0) != -1) {
-        lastPageId = new PageId(lastPageBuffer.getInt(0), lastPageBuffer.getInt(4));
+
+      int nextPageFileIdx = lastPageBuffer.getInt(0);
+      int nextPagePageIdx = lastPageBuffer.getInt(4);
+
+      while (nextPageFileIdx != -1 && nextPagePageIdx != 0) {
+        lastPageId = new PageId(nextPageFileIdx, nextPagePageIdx);
         lastPageBuffer = bm.getPage(lastPageId);
+        nextPageFileIdx = lastPageBuffer.getInt(0);
+        nextPagePageIdx = lastPageBuffer.getInt(4);
       }
 
       lastPageBuffer.putInt(0, newDataPageId.getFileIdx());
@@ -234,58 +242,71 @@ public class FileManager {
     }
   }
 
-  public RecordId InsertRecordIntoTable(Record record) throws IOException, PageNotFoundException {
-    BufferManager bm = BufferManager.getInstance();
-    TableInfo tabInfo = record.getTabInfo();
-    PageId dataPageId = getFreeDataPageId(tabInfo, record.getSize());
+  public RecordId InsertRecordIntoTable(Record record) {
+    try {
+      BufferManager bm = BufferManager.getInstance();
+      TableInfo tabInfo = record.getTabInfo();
+      PageId dataPageId = getFreeDataPageId(tabInfo, record.getSize());
 
-    if (dataPageId == null) {
-      dataPageId = addDataPage(tabInfo);
-    }
-
-    ByteBuffer dataPageBuffer = bm.getPage(dataPageId);
-    byte[] dataPageArray = new byte[dataPageBuffer.capacity()];
-    dataPageBuffer.get(dataPageArray);
-
-    int offset = ByteBuffer.wrap(dataPageArray, DBParams.SGBDPageSize - 4, 4).getInt();
-    byte[] recordArray = new byte[record.getSize()];
-    record.writeToBuffer(recordArray, 0);
-    System.arraycopy(recordArray, 0, dataPageArray, offset, recordArray.length);
-
-    ByteBuffer.wrap(dataPageArray).putInt(DBParams.SGBDPageSize - 4, offset + recordArray.length);
-    int recordCount = ByteBuffer.wrap(dataPageArray, DBParams.SGBDPageSize - 8, 4).getInt();
-    ByteBuffer.wrap(dataPageArray).putInt(DBParams.SGBDPageSize - 8, recordCount + 1);
-    ByteBuffer.wrap(dataPageArray).putInt(DBParams.SGBDPageSize - (8 + (recordCount + 1) * 8), offset);
-    ByteBuffer.wrap(dataPageArray).putInt(DBParams.SGBDPageSize - (8 + (recordCount + 1) * 8) + 4, recordArray.length);
-
-    dataPageBuffer.clear();
-    dataPageBuffer.put(dataPageArray);
-
-    bm.freePage(dataPageId, 1);
-
-    ByteBuffer headerPageBuffer = bm.getPage(tabInfo.getHeaderPageId());
-    byte[] headerPageArray = new byte[headerPageBuffer.capacity()];
-    headerPageBuffer.get(headerPageArray);
-
-    int slotCount = (DBParams.SGBDPageSize - 8) / 8;
-
-    for (int i = 0; i < slotCount; i++) {
-      int slotStart = ByteBuffer.wrap(headerPageArray, 4 + i * 8, 4).getInt();
-      int slotSize = ByteBuffer.wrap(headerPageArray, 8 + i * 8, 4).getInt();
-
-      if (slotStart == 0 && slotSize == 0) {
-        ByteBuffer.wrap(headerPageArray).putInt(4 + i * 8, dataPageId.getPageIdx());
-        ByteBuffer.wrap(headerPageArray).putInt(8 + i * 8, record.getSize());
-        break;
+      if (dataPageId == null) {
+        dataPageId = addDataPage(tabInfo);
+        System.out.println("Added new data page: " + dataPageId);
+      } else {
+        System.out.println("Found free data page: " + dataPageId);
       }
+
+      ByteBuffer dataPageBuffer = bm.getPage(dataPageId);
+      byte[] dataPageArray = new byte[dataPageBuffer.capacity()];
+      dataPageBuffer.get(dataPageArray);
+
+      int offset = ByteBuffer.wrap(dataPageArray, DBParams.SGBDPageSize - 4, 4).getInt();
+      byte[] recordArray = new byte[record.getSize()];
+      record.writeToBuffer(recordArray, 0);
+      System.arraycopy(recordArray, 0, dataPageArray, offset, recordArray.length);
+
+      ByteBuffer.wrap(dataPageArray).putInt(DBParams.SGBDPageSize - 4, offset + recordArray.length);
+      int recordCount = ByteBuffer.wrap(dataPageArray, DBParams.SGBDPageSize - 8, 4).getInt();
+      ByteBuffer.wrap(dataPageArray).putInt(DBParams.SGBDPageSize - 8, recordCount + 1);
+      ByteBuffer.wrap(dataPageArray).putInt(DBParams.SGBDPageSize - (8 + (recordCount + 1) * 8), offset);
+      ByteBuffer.wrap(dataPageArray).putInt(DBParams.SGBDPageSize - (8 + (recordCount + 1) * 8) + 4,
+          recordArray.length);
+
+      dataPageBuffer.clear();
+      dataPageBuffer.put(dataPageArray);
+
+      bm.freePage(dataPageId, 1);
+
+      ByteBuffer headerPageBuffer = bm.getPage(tabInfo.getHeaderPageId());
+      byte[] headerPageArray = new byte[headerPageBuffer.capacity()];
+      headerPageBuffer.get(headerPageArray);
+
+      int slotCount = (DBParams.SGBDPageSize - 8) / 8;
+
+      for (int i = 0; i < slotCount; i++) {
+        int slotStart = ByteBuffer.wrap(headerPageArray, 4 + i * 8, 4).getInt();
+        int slotSize = ByteBuffer.wrap(headerPageArray, 8 + i * 8, 4).getInt();
+
+        if (slotStart == 0 && slotSize == 0) {
+          ByteBuffer.wrap(headerPageArray).putInt(4 + i * 8, dataPageId.getPageIdx());
+          ByteBuffer.wrap(headerPageArray).putInt(8 + i * 8, record.getSize());
+          break;
+        }
+      }
+
+      headerPageBuffer.clear();
+      headerPageBuffer.put(headerPageArray);
+
+      bm.freePage(tabInfo.getHeaderPageId(), 1);
+
+      return new RecordId(dataPageId, recordCount + 1);
+    } catch (IOException e) {
+      System.out.println("An IOException occurred while inserting the record into the table: " + e.getMessage());
+    } catch (PageNotFoundException e) {
+      System.out
+          .println("A PageNotFoundException occurred while inserting the record into the table: " + e.getMessage());
     }
 
-    headerPageBuffer.clear();
-    headerPageBuffer.put(headerPageArray);
-
-    bm.freePage(tabInfo.getHeaderPageId(), 1);
-
-    return new RecordId(dataPageId, recordCount + 1);
+    return null;
   }
 
   public List<Record> GetAllRecords(TableInfo tabInfo) throws IOException, PageNotFoundException {
