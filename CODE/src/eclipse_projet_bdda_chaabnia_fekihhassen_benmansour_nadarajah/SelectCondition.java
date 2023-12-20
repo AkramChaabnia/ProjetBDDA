@@ -49,6 +49,8 @@ public class SelectCondition {
       // Handle the case where the column does not exist in the record
       System.out.println("The column " + columnName + " does not exist in the record");
       return false;
+    } else {
+      System.out.println("The column " + columnName + " exists in the record");
     }
 
     String columnValue = record.getRecvalues().get(columnIndex);
@@ -57,6 +59,9 @@ public class SelectCondition {
       System.out.println(
           "The column " + columnName + " has a null value in the record because of a certain problem");
       return false;
+    } else {
+      System.out.println(
+          "The column " + columnName + " has a non-null value in the record because of a certain problem");
     }
 
     // Compare the value with the condition

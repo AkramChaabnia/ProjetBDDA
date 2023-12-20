@@ -126,6 +126,7 @@ public class Record {
     public void addValue(Object value) {
         this.recvalues.add(String.valueOf(value));
         this.size = calculateSize(); // on recalcule la taille apres chaque ajout
+        System.out.println("Added value: " + value + " to record" + this.recvalues.size());
     }
 
     public int getSize() {
