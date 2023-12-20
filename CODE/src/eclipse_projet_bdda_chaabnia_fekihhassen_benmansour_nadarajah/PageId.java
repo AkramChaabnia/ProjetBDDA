@@ -1,5 +1,7 @@
 package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
+import java.util.Objects;
+
 public class PageId {
     private int fileId;
     private int pageId;
@@ -20,5 +22,22 @@ public class PageId {
     @Override
     public String toString() {
         return "PageId{" + "File Id=" + fileId + ", Numero de page=" + pageId + '}';
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass()) {
+            return false;
+        }
+        PageId pageId = (PageId) obj;
+        return fileId == pageId.fileId && this.pageId == pageId.pageId;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(fileId, pageId);
     }
 }

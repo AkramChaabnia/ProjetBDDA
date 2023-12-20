@@ -3,6 +3,7 @@ package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class FileManager {
@@ -163,9 +164,22 @@ public class FileManager {
   }
 
   public List<Record> getRecordsInDataPage(TableInfo tabInfo, PageId pageId) throws IOException, PageNotFoundException {
+    if (tabInfo == null) {
+      System.out.println("tabInfo is null");
+      return Collections.emptyList();
+    }
+    if (pageId == null) {
+      System.out.println("pageId is null");
+      return Collections.emptyList();
+    }
+
     List<Record> records = new ArrayList<>();
     BufferManager bm = BufferManager.getInstance();
     byte[] dataPageBuffer = bm.getPage(pageId).array();
+    if (dataPageBuffer == null) {
+      System.out.println("dataPageBuffer is null");
+      return Collections.emptyList();
+    }
 
     try {
       int slotCount = (DBParams.SGBDPageSize - 8) / 8;
@@ -191,10 +205,19 @@ public class FileManager {
   }
 
   public List<PageId> getDataPages(TableInfo tabInfo) throws IOException, PageNotFoundException {
+    if (tabInfo == null) {
+      System.out.println("tabInfo is null");
+      return Collections.emptyList();
+    }
+
     List<PageId> dataPageIds = new ArrayList<>();
     BufferManager bm = BufferManager.getInstance();
     PageId headerPageId = tabInfo.getHeaderPageId();
     ByteBuffer headerPageBuffer = bm.getPage(headerPageId);
+    if (headerPageBuffer == null) {
+      System.out.println("headerPageBuffer is null");
+      return Collections.emptyList();
+    }
 
     try {
       int numDataPages = headerPageBuffer.getInt(0);

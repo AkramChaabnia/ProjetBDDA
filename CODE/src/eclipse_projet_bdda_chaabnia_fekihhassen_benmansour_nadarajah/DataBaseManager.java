@@ -19,18 +19,17 @@ public class DataBaseManager {
   public void init() {
     // Initialisation de DatabaseInfo
     DataBaseInfo.getInstance().init();
-
     // Initialisation de BufferManager, si nécessaire
-   BufferManager.getInstance().init();
+    BufferManager.getInstance().init();
 
   }
 
-
   public void finish() {
-    BufferManager.getInstance().flushAll();
     DataBaseInfo.getInstance().finish();
-    // DiskManager.getInstance().finish(); 
-}
+    BufferManager.getInstance().flushAll();
+    DiskManager.getInstance().reset();
+  }
+
   public void processCommand(String chaineCommande) {
     try {
       String[] commande = chaineCommande.trim().toUpperCase().split("\\s+"); // ignorer la casse ??

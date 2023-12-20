@@ -45,7 +45,6 @@ public class DiskManager {
 		} else {
 			int fileNumber = getMinFile();
 			int pageNumber = fileSize[fileNumber] / pageSize;
-			fileSize[fileNumber] += pageSize;
 			pageId = new PageId(fileNumber, pageNumber);
 			// Increment the page count
 			fileSize[fileNumber] += pageSize;
@@ -53,14 +52,17 @@ public class DiskManager {
 
 		ByteBuffer page = ByteBuffer.allocate(pageSize);
 		pageContents.put(pageId, page);
+		System.out.println("Allocated page with id: " + pageId);
 		return pageId;
 	}
 
 	public ByteBuffer readPage(PageId pageId) {
 		ByteBuffer page = pageContents.get(pageId);
 		if (page == null) {
-			// Handle case where page is not present
-			return null;
+			// If the page is not present, allocate a new ByteBuffer and put it in the map
+			page = ByteBuffer.allocate(pageSize);
+			pageContents.put(pageId, page);
+			System.out.println("Page with id " + pageId + " not found. A new page has been allocated.");
 		}
 
 		int copyLength = Math.min(page.remaining(), pageSize);
@@ -70,6 +72,7 @@ public class DiskManager {
 		page.limit(copyLength);
 		resultBuffer.put(page);
 		resultBuffer.flip();
+		System.out.println("Read page with id: " + pageId);
 		return resultBuffer;
 	}
 
@@ -77,6 +80,7 @@ public class DiskManager {
 		ByteBuffer page = pageContents.get(pageId);
 		if (page == null) {
 			// Handle case where page is not present
+			System.out.println("Page with id " + pageId + " not found");
 			return;
 		}
 
@@ -86,6 +90,7 @@ public class DiskManager {
 		buff.limit(copyLength);
 		page.put(buff);
 		page.flip(); // Flip the page buffer
+		System.out.println("Wrote to page with id: " + pageId);
 	}
 
 	public void deallocatePage(PageId pageId) {

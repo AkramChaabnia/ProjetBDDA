@@ -21,18 +21,20 @@ public class BufferManager {
 
 	public void init() {
 		bufferPool.clear();
-		// DiskManager.getInstance().init();
 	}
 
 	public ByteBuffer getPage(PageId pageId, ByteBuffer buff) {
 		if (bufferPool.containsKey(pageId)) {
 			Frame frame = bufferPool.get(pageId);
 			frame.incrementerPinCount();
-			;
 			return frame.getBuffer();
 		} else {
-			// Si la page n'est pas dans la mémoire tampon, récupérez-la depuis DiskManager
 			ByteBuffer pageData = DiskManager.getInstance().readPage(pageId);
+			if (pageData == null) {
+				System.out.println("pageData is null in getPage with buffer");
+			} else {
+				System.out.println("pageData is not null in getPage with buffer");
+			}
 			Frame newFrame = new Frame(pageData);
 			bufferPool.put(pageId, newFrame);
 			return newFrame.getBuffer();
@@ -45,8 +47,12 @@ public class BufferManager {
 			frame.incrementerPinCount();
 			return frame.getBuffer();
 		} else {
-
 			ByteBuffer pageData = DiskManager.getInstance().readPage(pageId);
+			if (pageData == null) {
+				System.out.println("pageData is null in getPage");
+			} else {
+				System.out.println("pageData is not null in getPage");
+			}
 			Frame newFrame = new Frame(pageData);
 			bufferPool.put(pageId, newFrame);
 			return newFrame.getBuffer();
