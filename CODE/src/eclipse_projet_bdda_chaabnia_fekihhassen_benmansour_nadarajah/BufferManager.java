@@ -58,12 +58,12 @@ public class BufferManager {
 			} else {
 				ByteBuffer pageData = DiskManager.getInstance().readPage(pageId);
 				if (pageData == null) {
-					System.err.println("Error: Null pageData encountered for getPage: " + pageId);
+					System.err.println("Error: Null pageData rencontrée pour getPage: " + pageId);
 					// Potential causes: Disk read issues, missing page, etc.
 
 					return null;
 				} else {
-					System.out.println("PageData is not null in getPage for getPage: " + pageId);
+					System.out.println("PageData n'est pas null pour getPage dans getPage: " + pageId);
 				}
 				Frame newFrame = new Frame(pageData);
 				bufferPool.put(pageId, newFrame);
@@ -72,9 +72,8 @@ public class BufferManager {
 		} catch (
 
 		Exception e) {
-			System.err.println("Error in getPage for PageId: " + pageId + ". Reason: " + e.getMessage());
-			// Log or handle the exception appropriately
-			return null; // Or handle with appropriate error handling mechanism
+			System.err.println("Erreurr dans getPage pour PageId: " + pageId + ". Raison: " + e.getMessage());
+			return null;
 		}
 
 	}
@@ -101,9 +100,9 @@ public class BufferManager {
 			} else {
 				ByteBuffer pageData = DiskManager.getInstance().readPage(pageId);
 				if (pageData == null) {
-					System.err.println("Error: Null pageData encountered for getPage: " + pageId);
+					System.err.println("Error: pageData null pour getPage: " + pageId);
 				} else {
-					System.out.println("PageData is not null in getPage for getPage: " + pageId);
+					System.out.println("PageData n'est pas null dans getPage pour getPage " + pageId);
 				}
 				Frame newFrame = new Frame(pageData);
 				bufferPool.put(pageId, newFrame);
@@ -112,9 +111,8 @@ public class BufferManager {
 		} catch (
 
 		Exception e) {
-			System.err.println("Error in getPage for PageId: " + pageId + ". Reason: " + e.getMessage());
-			// Log or handle the exception appropriately
-			return null; // Or handle with appropriate error handling mechanism
+			System.err.println("Erreurr dans getPage pour PageId: " + pageId + ". Raison: " + e.getMessage());
+			return null;
 		}
 
 	}
