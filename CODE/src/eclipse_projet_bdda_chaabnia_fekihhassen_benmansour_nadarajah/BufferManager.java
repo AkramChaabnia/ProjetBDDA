@@ -4,14 +4,27 @@ import java.nio.ByteBuffer;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Cette classe gère le tampon de mémoire utilisé pour stocker les pages de
+ * données en mémoire.
+ */
 public class BufferManager {
-	private static BufferManager instance;
-	public Map<PageId, Frame> bufferPool;
+	private static BufferManager instance; // Instance unique du Buffer Manager
+	public Map<PageId, Frame> bufferPool; // Tampon de mémoire pour stocker les pages
 
+	/**
+	 * Constructeur privé de la classe BufferManager.
+	 * Initialise le tampon de mémoire sous forme de HashMap.
+	 */
 	private BufferManager() {
 		bufferPool = new HashMap<>();
 	}
 
+	/**
+	 * Obtient l'instance unique du Buffer Manager (singleton).
+	 *
+	 * @return L'instance unique du Buffer Manager.
+	 */
 	public static BufferManager getInstance() {
 		if (instance == null) {
 			instance = new BufferManager();
@@ -19,10 +32,23 @@ public class BufferManager {
 		return instance;
 	}
 
+	/**
+	 * Initialise le tampon de mémoire en vidant son contenu.
+	 */
 	public void init() {
 		bufferPool.clear();
 	}
 
+	/**
+	 * Obtient une page à partir de son identifiant (PageId) en utilisant un tampon
+	 * de mémoire.
+	 * Si la page est déjà en mémoire, elle est récupérée depuis le tampon.
+	 * Sinon, elle est lue depuis le gestionnaire de disque et stockée dans le
+	 * tampon.
+	 *
+	 * @param pageId L'identifiant de la page à obtenir.
+	 * @return Le ByteBuffer contenant les données de la page.
+	 */
 	public ByteBuffer getPage(PageId pageId, ByteBuffer buff) {
 		try {
 			if (bufferPool.containsKey(pageId)) {
@@ -53,6 +79,18 @@ public class BufferManager {
 
 	}
 
+	/**
+	 * Obtient une page à partir de son identifiant (PageId) en utilisant un tampon
+	 * de mémoire.
+	 * Si la page est déjà en mémoire elle est récupérée depuis le tampon.
+	 * Sinon elle est lue depuis le gestionnaire de disque et stockée dans le
+	 * tampon.
+	 *
+	 * @param pageId L'identifiant de la page à obtenir.
+	 * @param buff   Le ByteBuffer existant dans lequel stocker les données de la
+	 *               page.
+	 * @return Le ByteBuffer contenant les données de la page.
+	 */
 	public ByteBuffer getPage(PageId pageId) {
 		try {
 
@@ -81,6 +119,13 @@ public class BufferManager {
 
 	}
 
+	/**
+	 * Libère une page du tampon de mémoire et la désalloue si nécessaire.
+	 *
+	 * @param pageId   L'identifiant de la page à libérer.
+	 * @param valDirty Une valeur indiquant si la page est marquée comme "dirty" (1
+	 *                 pour vrai, 0 pour faux).
+	 */
 	public void freePage(PageId pageId, int valDirty) {
 		if (bufferPool.containsKey(pageId)) {
 			Frame frame = bufferPool.get(pageId);
@@ -101,6 +146,10 @@ public class BufferManager {
 		}
 	}
 
+	/**
+	 * Écrit toutes les pages dirty du tampon de mémoire dans le gestionnaire de
+	 * disque et vide le tampon.
+	 */
 	public void flushAll() {
 		for (Map.Entry<PageId, Frame> entry : bufferPool.entrySet()) {
 			Frame frame = entry.getValue();
@@ -115,6 +164,11 @@ public class BufferManager {
 		bufferPool.clear();
 	}
 
+	/**
+	 * Réinitialise le tampon de mémoire en remettant à zéro les compteurs pincount
+	 * et les états dirty
+	 * et en réalloue de nouveaux ByteBuffer aux frames.
+	 */
 	public void reset() {
 		for (Frame frame : bufferPool.values()) {
 			frame.setPinCount(0);

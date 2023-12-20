@@ -8,6 +8,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 
+/**
+ * Cette classe gère la gestion de l'allocation et de la désallocation des pages sur le disque.
+ */
 public class DiskManager {
 	private static final int pageSize = 4096;
 	private static DiskManager instance = new DiskManager();
@@ -32,10 +35,20 @@ public class DiskManager {
 		}
 	}
 
+	/**
+     * Retourne l'instance unique du DiskManager.
+     *
+     * @return L'instance du DiskManager.
+     */
 	public static DiskManager getInstance() {
 		return instance;
 	}
 
+	/**
+     * Alloue une nouvelle page sur le disque.
+     *
+     * @return L'identifiant de la page allouée.
+     */
 	public PageId allocatePage() {
 		PageId pageId = null;
 
@@ -61,6 +74,12 @@ public class DiskManager {
 		return pageId;
 	}
 
+	 /**
+     * Lit une page à partir du disque.
+     *
+     * @param pageId L'identifiant de la page à lire.
+     * @return Le contenu de la page sous forme de ByteBuffer.
+     */
 	public ByteBuffer readPage(PageId pageId) {
 		ByteBuffer page = pageContents.get(pageId);
 		if (page == null) {
@@ -81,6 +100,13 @@ public class DiskManager {
 		return resultBuffer;
 	}
 
+
+    /**
+     * Écrit une page sur le disque.
+     *
+     * @param pageId L'identifiant de la page à écrire.
+     * @param buff   Le contenu de la page sous forme de ByteBuffer.
+     */
 	public void writePage(PageId pageId, ByteBuffer buff) {
 		ByteBuffer page = pageContents.get(pageId);
 		if (page == null) {
@@ -98,6 +124,11 @@ public class DiskManager {
 		System.out.println("Wrote to page with id: " + pageId);
 	}
 
+	/**
+     * Désalloue une page du disque.
+     *
+     * @param pageId L'identifiant de la page à désallouer.
+     */
 	public void deallocatePage(PageId pageId) {
 		if (pageContents.containsKey(pageId)) {
 			deallocatedPages.add(pageId); // Adding deallocated page
@@ -118,10 +149,21 @@ public class DiskManager {
 
 	}
 
+	/**
+     * Retourne le nombre actuel de pages allouées.
+     *
+     * @return Le nombre de pages allouées.
+     */
 	public int getCurrentAllocatedPageCount() {
 		return pageContents.size();
 	}
 
+
+	/**
+	 * Retourne le numéro du fichier avec la plus petite taille parmi les fichiers disponibles.
+	 *
+	 * @return Le numéro du fichier avec la plus petite taille.
+	*/
 	private int getMinFile() {
 		int minFileSize = Integer.MAX_VALUE;
 		int fileNumber = 0;
@@ -136,6 +178,10 @@ public class DiskManager {
 		return fileNumber;
 	}
 
+
+    /**
+     * Réinitialise le DiskManager en effaçant tous les fichiers et les données.
+     */
 	public void reset() {
 		Arrays.fill(fileSize, 0);
 		deallocatedPages.clear();
