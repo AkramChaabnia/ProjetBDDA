@@ -2,13 +2,25 @@ package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
 import java.io.IOException;
 
+/**
+ * Cette classe gère la gestion générale de la base de données, y compris
+ * l'initialisation, la finalisation et le traitement des commandes.
+ */
 public class DataBaseManager {
 
   private static DataBaseManager instance = new DataBaseManager();
 
+  /**
+   * Constructeur privé de DataBaseManager.
+   */
   private DataBaseManager() {
   }
 
+  /**
+   * Obtenez l'instance unique de la classe DataBaseManager.
+   *
+   * @return L'instance unique de DataBaseManager.
+   */
   public static DataBaseManager getInstance() {
     if (instance == null) {
       instance = new DataBaseManager();
@@ -16,20 +28,32 @@ public class DataBaseManager {
     return instance;
   }
 
+  /**
+   * Initialise DatabaseInfo et BufferManager.
+   */
   public void init() {
     // Initialisation de DatabaseInfo
     DataBaseInfo.getInstance().init();
-    // Initialisation de BufferManager, si nécessaire
+    // Initialisation de BufferManager
     BufferManager.getInstance().init();
-
   }
 
+  /**
+   * Finalise la base de données en sauvegardant les informations et en vidant le
+   * gestionnaire de tampons.
+   */
   public void finish() {
     DataBaseInfo.getInstance().finish();
     BufferManager.getInstance().flushAll();
     DiskManager.getInstance().reset();
   }
 
+  /**
+   * Traite une chaîne de commande donnée en l'analysant et en exécutant la
+   * commande appropriée.
+   *
+   * @param chaineCommande La chaîne de commande à traiter.
+   */
   public void processCommand(String chaineCommande) {
     try {
       String[] commande = chaineCommande.trim().toUpperCase().split("\\s+"); // ignorer la casse ??
@@ -74,5 +98,4 @@ public class DataBaseManager {
       System.out.println("Une erreur s'est produite lors du traitement de la commande : " + e.getMessage());
     }
   }
-
 }
