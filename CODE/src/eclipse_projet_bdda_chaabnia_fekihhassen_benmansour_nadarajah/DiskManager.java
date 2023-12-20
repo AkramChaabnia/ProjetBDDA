@@ -9,7 +9,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 
 /**
- * Cette classe gère la gestion de l'allocation et de la désallocation des pages sur le disque.
+ * Cette classe gère la gestion de l'allocation et de la désallocation des pages
+ * sur le disque.
  */
 public class DiskManager {
 	private static final int pageSize = 4096;
@@ -36,134 +37,127 @@ public class DiskManager {
 	}
 
 	/**
-     * Retourne l'instance unique du DiskManager.
-     *
-     * @return L'instance du DiskManager.
-     */
+	 * Retourne l'instance unique du DiskManager.
+	 *
+	 * @return L'instance du DiskManager.
+	 */
 	public static DiskManager getInstance() {
 		return instance;
 	}
 
 	/**
-     * Alloue une nouvelle page sur le disque.
-     *
-     * @return L'identifiant de la page allouée.
-     */
+	 * Alloue une nouvelle page sur le disque.
+	 *
+	 * @return L'identifiant de la page allouée.
+	 */
 	public PageId allocatePage() {
 		PageId pageId = null;
 
 		if (!deallocatedPages.isEmpty()) {
-			pageId = deallocatedPages.remove(0); // Reusing deallocated page
+			pageId = deallocatedPages.remove(0); // réutiliser une page désaoullée
 		} else {
 			int fileNumber = getMinFile();
 			int pageNumber = fileSize[fileNumber] / pageSize;
 
-			// Check for file space limit
+			// check la limite d'espace fichier
 			if (fileSize[fileNumber] + pageSize > fileSize[fileNumber + 1]) {
 				fileNumber++;
 				pageNumber = 0;
 			}
 
 			pageId = new PageId(fileNumber, pageNumber);
-			fileSize[fileNumber] += pageSize; // Increment the page count
+			fileSize[fileNumber] += pageSize; // incrémente page count
 		}
 
 		ByteBuffer page = ByteBuffer.allocate(pageSize);
 		pageContents.put(pageId, page);
-		System.out.println("Allocated page with id: " + pageId);
+		System.out.println("Page allouée avec id: " + pageId);
 		return pageId;
 	}
 
-	 /**
-     * Lit une page à partir du disque.
-     *
-     * @param pageId L'identifiant de la page à lire.
-     * @return Le contenu de la page sous forme de ByteBuffer.
-     */
+	/**
+	 * Lit une page à partir du disque.
+	 *
+	 * @param pageId L'identifiant de la page à lire.
+	 * @return Le contenu de la page sous forme de ByteBuffer.
+	 */
 	public ByteBuffer readPage(PageId pageId) {
 		ByteBuffer page = pageContents.get(pageId);
 		if (page == null) {
-			// If the page is not present, allocate a new ByteBuffer and put it in the map
+			// si la page n'est pas présente, alloue un nouveau ByteBuffer et mets dans map
 			page = ByteBuffer.allocate(pageSize);
 			pageContents.put(pageId, page);
-			System.out.println("Page with id " + pageId + " not found. A new page has been allocated.");
+			System.out.println("Page avec id " + pageId + " introuvable. Une nouvelle page a été attribuée.");
 		}
 
 		int copyLength = Math.min(page.remaining(), pageSize);
 		ByteBuffer resultBuffer = ByteBuffer.allocate(copyLength);
-		// Set position to 0 before putting data
+		// met la position à 0 avant de mettre les données
 		page.position(0);
 		page.limit(copyLength);
 		resultBuffer.put(page);
 		resultBuffer.flip();
-		System.out.println("Read page with id: " + pageId);
+		System.out.println("Lecture de la page avec id: " + pageId);
 		return resultBuffer;
 	}
 
-
-    /**
-     * Écrit une page sur le disque.
-     *
-     * @param pageId L'identifiant de la page à écrire.
-     * @param buff   Le contenu de la page sous forme de ByteBuffer.
-     */
+	/**
+	 * Écrit une page sur le disque.
+	 *
+	 * @param pageId L'identifiant de la page à écrire.
+	 * @param buff   Le contenu de la page sous forme de ByteBuffer.
+	 */
 	public void writePage(PageId pageId, ByteBuffer buff) {
 		ByteBuffer page = pageContents.get(pageId);
 		if (page == null) {
-			// Handle case where page is not present
-			System.out.println("Page with id " + pageId + " not found");
+			// gère le cas ou la page n'est pas présente
+			System.out.println("Page avec id " + pageId + " introuvable.");
 			return;
 		}
 
 		int copyLength = Math.min(buff.remaining(), pageSize);
-		// Set position to 0 before putting data
+		// met la position à 0 avant de mettre les données
 		buff.position(0);
 		buff.limit(copyLength);
 		page.put(buff);
-		page.flip(); // Flip the page buffer
-		System.out.println("Wrote to page with id: " + pageId);
+		page.flip(); // Flip page buffer
+		System.out.println("A écrit sur la page avec id: " + pageId);
 	}
 
 	/**
-     * Désalloue une page du disque.
-     *
-     * @param pageId L'identifiant de la page à désallouer.
-     */
+	 * Désalloue une page du disque.
+	 *
+	 * @param pageId L'identifiant de la page à désallouer.
+	 */
 	public void deallocatePage(PageId pageId) {
 		if (pageContents.containsKey(pageId)) {
 			deallocatedPages.add(pageId); // Adding deallocated page
 			pageContents.remove(pageId);
-			System.out.println("Deallocated page with id: " + pageId);
+			System.out.println("Page désallouée avec l'id: " + pageId);
 
-			// Additional logic to clear remnants or inconsistencies
-			// Clearing any remnants or performing necessary cleanup after deallocation
-			// This might involve resetting the ByteBuffer or marking the space as free
-			// to avoid future data corruption or inconsistencies
 			ByteBuffer clearedBuffer = ByteBuffer.allocate(pageSize);
 			pageContents.put(pageId, clearedBuffer);
 		} else {
-			System.err.println("Page with id " + pageId + " not found for deallocation!");
-			// Handle the case where the page to deallocate is not found
-			// This might involve throwing an exception or logging the issue
+			System.err.println("Page avec id " + pageId + " introuvable pour la désallocation!");
 		}
 
 	}
 
 	/**
-     * Retourne le nombre actuel de pages allouées.
-     *
-     * @return Le nombre de pages allouées.
-     */
+	 * Retourne le nombre actuel de pages allouées.
+	 *
+	 * @return Le nombre de pages allouées.
+	 */
 	public int getCurrentAllocatedPageCount() {
 		return pageContents.size();
 	}
 
-
 	/**
-	 * Retourne le numéro du fichier avec la plus petite taille parmi les fichiers disponibles.
+	 * Retourne le numéro du fichier avec la plus petite taille parmi les fichiers
+	 * disponibles.
 	 *
 	 * @return Le numéro du fichier avec la plus petite taille.
-	*/
+	 */
 	private int getMinFile() {
 		int minFileSize = Integer.MAX_VALUE;
 		int fileNumber = 0;
@@ -178,10 +172,9 @@ public class DiskManager {
 		return fileNumber;
 	}
 
-
-    /**
-     * Réinitialise le DiskManager en effaçant tous les fichiers et les données.
-     */
+	/**
+	 * Réinitialise le DiskManager en effaçant tous les fichiers et les données.
+	 */
 	public void reset() {
 		Arrays.fill(fileSize, 0);
 		deallocatedPages.clear();
