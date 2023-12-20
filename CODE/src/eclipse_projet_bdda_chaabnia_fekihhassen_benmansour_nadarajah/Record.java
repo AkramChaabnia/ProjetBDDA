@@ -70,20 +70,26 @@ public class Record {
         int offset = pos;
 
         for (String value : recvalues) {
+
             String type = tabInfo.getColInfoList().get(recvalues.indexOf(value)).getType();
             byte[] bytesToWrite;
 
             if (type.startsWith("VARSTRING")) {
+
                 int length = Integer.parseInt(type.substring(10, type.length() - 1));
                 bytesToWrite = value.getBytes();
                 System.arraycopy(bytesToWrite, 0, buff, offset, bytesToWrite.length);
                 offset += length;
+
             } else if (type.equals("INT")) {
+
                 int intValue = Integer.parseInt(value);
                 bytesToWrite = ByteBuffer.allocate(Integer.BYTES).putInt(intValue).array();
                 System.arraycopy(bytesToWrite, 0, buff, offset, bytesToWrite.length);
                 offset += Integer.BYTES;
+
             } else if (type.equals("FLOAT")) {
+
                 float floatValue = Float.parseFloat(value);
                 bytesToWrite = ByteBuffer.allocate(Float.BYTES).putFloat(floatValue).array();
                 System.arraycopy(bytesToWrite, 0, buff, offset, bytesToWrite.length);
@@ -111,17 +117,22 @@ public class Record {
             byte[] bytesToRead;
 
             if (colType.startsWith("VARSTRING")) {
+
                 int length = Integer.parseInt(colType.substring(10, colType.length() - 1));
                 bytesToRead = new byte[length];
                 System.arraycopy(buff, offset, bytesToRead, 0, length);
                 recvalues.add(new String(bytesToRead));
                 offset += length;
+
             } else if (colType.equals("INT")) {
+
                 bytesToRead = new byte[Integer.BYTES];
                 System.arraycopy(buff, offset, bytesToRead, 0, Integer.BYTES);
                 recvalues.add(String.valueOf(ByteBuffer.wrap(bytesToRead).getInt()));
                 offset += Integer.BYTES;
+
             } else if (colType.equals("FLOAT")) {
+                
                 bytesToRead = new byte[Float.BYTES];
                 System.arraycopy(buff, offset, bytesToRead, 0, Float.BYTES);
                 recvalues.add(String.valueOf(ByteBuffer.wrap(bytesToRead).getFloat()));

@@ -29,14 +29,18 @@ public class InsertCommand {
      */
     private void parseCommand(String command) {
         String[] parts = command.split("VALUES");
+
         if (parts.length != 2) {
             throw new IllegalArgumentException("Format incorrect pour la commande INSERT");
         }
 
         this.nomRelation = parts[0].split("\\s+")[2].trim();
+
         String valuePart = parts[1].trim();
         valuePart = valuePart.substring(1, valuePart.length() - 1);
+
         this.values = new ArrayList<>();
+
         for (String val : valuePart.split(",")) {
             values.add(val.trim());
         }
@@ -48,8 +52,10 @@ public class InsertCommand {
      * @throws Exception Si une erreur survient pendant l'exécution de la commande.
      */
     public void execute() {
+
         try {
             TableInfo tableInfo = DataBaseInfo.getInstance().getTableInfo(nomRelation);
+
             if (tableInfo == null) {
                 throw new IllegalArgumentException("Table non trouvée : " + nomRelation);
             } else {
@@ -65,9 +71,12 @@ public class InsertCommand {
             }
 
             Record record = new Record(tableInfo);
+            
             for (int i = 0; i < values.size(); i++) {
+
                 String value = values.get(i);
                 String colType = tableInfo.getColInfoList().get(i).getType();
+
                 switch (colType.toUpperCase()) {
                     case "INT":
                         record.addValue(Integer.parseInt(value));
