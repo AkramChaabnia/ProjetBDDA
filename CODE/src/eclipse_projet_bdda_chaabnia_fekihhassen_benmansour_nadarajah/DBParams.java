@@ -1,5 +1,8 @@
 package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
+/**
+ * Cette classe contient les paramètres de configuration de la base de données.
+ */
 public class DBParams {
     // Chemin vers le dossier DB
     public static String DBPath;
