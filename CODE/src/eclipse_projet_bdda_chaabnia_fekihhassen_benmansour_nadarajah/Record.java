@@ -205,9 +205,9 @@ public class Record {
     }
 
     public void printRecordDetails() {
-        System.out.println("Record Details:");
+        // System.out.println("Details du record:");
         for (String value : recvalues) {
-            System.out.println("Value: " + value);
+            System.out.println("Valeur: " + value);
         }
     }
 

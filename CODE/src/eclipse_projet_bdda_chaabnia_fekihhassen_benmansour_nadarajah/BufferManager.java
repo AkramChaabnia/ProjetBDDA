@@ -63,7 +63,8 @@ public class BufferManager {
 
 					return null;
 				} else {
-					System.out.println("PageData n'est pas null pour getPage dans getPage: " + pageId);
+					// System.out.println("PageData n'est pas null pour getPage dans getPage: " +
+					// pageId);
 				}
 				Frame newFrame = new Frame(pageData);
 				bufferPool.put(pageId, newFrame);
@@ -102,7 +103,8 @@ public class BufferManager {
 				if (pageData == null) {
 					System.err.println("Error: pageData null pour getPage: " + pageId);
 				} else {
-					System.out.println("PageData n'est pas null dans getPage pour getPage " + pageId);
+					// System.out.println("PageData n'est pas null dans getPage pour getPage " +
+					// pageId);
 				}
 				Frame newFrame = new Frame(pageData);
 				bufferPool.put(pageId, newFrame);

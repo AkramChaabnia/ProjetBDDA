@@ -128,11 +128,11 @@ public class TableInfo {
      * de colonnes et les informations de colonnes.
      */
     public void printTableInfo() {
-        System.out.println("Table Name: " + nom_relation);
-        System.out.println("Number of Columns: " + nb_colonnes);
-        System.out.println("Columns:");
+        System.out.println("Nom de la relation: " + nom_relation);
+        // System.out.println("N: " + nb_colonnes);
+        System.out.println("Colonnes:");
         for (ColInfo colInfo : colInfoList) {
-            System.out.println("  Name: " + colInfo.getName() + ", Type: " + colInfo.getType());
+            System.out.println("  Nom: " + colInfo.getName() + ", Type: " + colInfo.getType());
         }
     }
 

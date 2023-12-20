@@ -66,8 +66,9 @@ public class InsertCommand {
                 throw new IllegalArgumentException(
                         "Le nombre de valeurs fournies ne correspond pas au nombre de colonnes dans la table");
             } else {
-                System.out.println("Le nombre de valeurs fournies correspond au nombre de colonnes dans la table "
-                        + tableInfo.getNb_colonnes() + " " + values.size());
+                // System.out.println("Le nombre de valeurs fournies correspond au nombre de
+                // colonnes dans la table "
+                // + tableInfo.getNb_colonnes() + " " + values.size());
             }
 
             Record record = new Record(tableInfo);
@@ -80,20 +81,20 @@ public class InsertCommand {
                 switch (colType.toUpperCase()) {
                     case "INT":
                         record.addValue(Integer.parseInt(value));
-                        System.out.println("Added INT value: " + value);
+                        // System.out.println("Added INT value: " + value);
                         break;
                     case "FLOAT":
                         record.addValue(Float.parseFloat(value));
-                        System.out.println("Added FLOAT value: " + value);
+                        // System.out.println("Added FLOAT value: " + value);
                         break;
                     case "STRING":
                         record.addValue(value);
-                        System.out.println("Added STRING value: " + value);
+                        // System.out.println("Added STRING value: " + value);
                         break;
                     default:
                         if (colType.toUpperCase().startsWith("VARSTRING")) {
                             record.addValue(value);
-                            System.out.println("Added VARSTRING value: " + value);
+                            // System.out.println("Added VARSTRING value: " + value);
                         } else {
                             throw new IllegalArgumentException("Type de colonne non supporté : " + colType);
                         }

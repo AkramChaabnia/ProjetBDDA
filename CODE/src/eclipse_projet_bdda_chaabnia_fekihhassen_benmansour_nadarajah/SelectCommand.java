@@ -97,7 +97,7 @@ public class SelectCommand {
    * @throws PageNotFoundException Si une page n'est pas trouvée.
    */
   public void execute() {
-    System.out.println("Executing SELECT command...");
+    System.out.println("SELECT command...");
 
     try {
       TableInfo tableInfo = DataBaseInfo.getInstance().getTableInfo(relationName);
@@ -107,20 +107,23 @@ public class SelectCommand {
         return;
       }
 
-      System.out.println("Fetching all records from table \"" + relationName + "\"...");
-      System.out.println("Number of columns = " + tableInfo.getNb_colonnes());
+      // System.out.println("Fetching all records from table \"" + relationName +
+      // "\"...");
+      System.out.println(
+          "Nombre de colonnes de la table " + tableInfo.getNom_relation() + " est  = " + tableInfo.getNb_colonnes());
       System.out.println(
           "Column names = " + tableInfo.getColInfoList().stream().map(ColInfo::getName).collect(Collectors.toList()));
       System.out.println("Header page id = " + tableInfo.getHeaderPageId());
 
       // Get all records using fileManager
       List<Record> allRecords = fileManager.GetAllRecords(tableInfo);
-      System.out.println("Number of records fetched from fileManager = " + allRecords.size());
+      // System.out.println("Number of records fetched from fileManager = " +
+      // allRecords.size());
 
       List<Record> records = new ArrayList<>(allRecords);
 
       if (this.condition) {
-        System.out.println("Applying conditions...");
+        // System.out.println("Applying conditions...");
         records = records.stream()
             .filter(record -> {
               System.out.println("Checking conditions for record: " + record);
@@ -131,10 +134,10 @@ public class SelectCommand {
             .collect(Collectors.toList());
       }
 
-      System.out.println("Printing records...");
+      // System.out.println("Printing records...");
       printRecords(records);
 
-      System.out.println("Total records = " + records.size());
+      // System.out.println("Total records = " + records.size());
     } catch (IOException e) {
       System.out.println("An IOException occurred while executing the SELECT command: " + e.getMessage());
     } catch (PageNotFoundException e) {
@@ -143,7 +146,7 @@ public class SelectCommand {
   }
 
   private void printRecords(List<Record> records) {
-    System.out.println("Printing records that satisfy the conditions...");
+    // System.out.println("Printing records that satisfy the conditions...");
     for (Record record : records) {
       if (satisfiesConditions(record)) {
         ArrayList<String> values = record.getRecvalues();

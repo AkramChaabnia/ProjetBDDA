@@ -46,7 +46,7 @@ public class Main {
 					break;
 				}
 
-				System.out.println("Executing command: " + command);
+				System.out.println("Execution de la commande: " + command);
 
 				upperCaseCommand = command.toUpperCase();
 				switch (upperCaseCommand) {

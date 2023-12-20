@@ -71,7 +71,7 @@ public class DiskManager {
 
 		ByteBuffer page = ByteBuffer.allocate(pageSize);
 		pageContents.put(pageId, page);
-		System.out.println("Page allouée avec id: " + pageId);
+		// System.out.println("Page allouée avec id: " + pageId);
 		return pageId;
 	}
 
@@ -87,7 +87,8 @@ public class DiskManager {
 			// si la page n'est pas présente, alloue un nouveau ByteBuffer et mets dans map
 			page = ByteBuffer.allocate(pageSize);
 			pageContents.put(pageId, page);
-			System.out.println("Page avec id " + pageId + " introuvable. Une nouvelle page a été attribuée.");
+			// System.out.println("Page avec id " + pageId + " introuvable. Une nouvelle
+			// page a été attribuée.");
 		}
 
 		int copyLength = Math.min(page.remaining(), pageSize);
@@ -97,7 +98,7 @@ public class DiskManager {
 		page.limit(copyLength);
 		resultBuffer.put(page);
 		resultBuffer.flip();
-		System.out.println("Lecture de la page avec id: " + pageId);
+		// System.out.println("Lecture de la page avec id: " + pageId);
 		return resultBuffer;
 	}
 
@@ -111,7 +112,7 @@ public class DiskManager {
 		ByteBuffer page = pageContents.get(pageId);
 		if (page == null) {
 			// gère le cas ou la page n'est pas présente
-			System.out.println("Page avec id " + pageId + " introuvable.");
+			// System.out.println("Page avec id " + pageId + " introuvable.");
 			return;
 		}
 
@@ -121,7 +122,7 @@ public class DiskManager {
 		buff.limit(copyLength);
 		page.put(buff);
 		page.flip(); // Flip page buffer
-		System.out.println("A écrit sur la page avec id: " + pageId);
+		// System.out.println("A écrit sur la page avec id: " + pageId);
 	}
 
 	/**
@@ -133,7 +134,7 @@ public class DiskManager {
 		if (pageContents.containsKey(pageId)) {
 			deallocatedPages.add(pageId); // Adding deallocated page
 			pageContents.remove(pageId);
-			System.out.println("Page désallouée avec l'id: " + pageId);
+			// System.out.println("Page désallouée avec l'id: " + pageId);
 
 			ByteBuffer clearedBuffer = ByteBuffer.allocate(pageSize);
 			pageContents.put(pageId, clearedBuffer);
