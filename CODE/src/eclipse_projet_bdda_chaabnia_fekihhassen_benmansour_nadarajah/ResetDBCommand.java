@@ -2,8 +2,15 @@ package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
 import java.io.File;
 
+/**
+ * Commande pour réinitialiser la base de données en supprimant tous les fichiers et en réinitialisant les gestionnaires.
+ */
 public class ResetDBCommand {
 
+  /**
+   * Exécute la réinitialisation de la base de données en supprimant tous les fichiers de la base de données,
+   * en réinitialisant le BufferManager, le DataBaseInfo et le DiskManager.
+   */
   public void execute() {
     // Delete all files in the DB folder
     File path = new File(DBParams.DBPath);

@@ -6,12 +6,22 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Commande pour effectuer une requête SELECT sur une table de la base de
+ * données.
+ */
 public class SelectCommand {
   private String relationName;
   private FileManager fileManager;
   private ArrayList<SelectCondition> conditions; // New field to store the conditions
   private boolean condition = false;
 
+    /**
+   * Crée une instance de la commande SELECT en analysant la commande fournie.
+   *
+   * @param command La commande SELECT sous forme de chaîne de caractères.
+   * @throws IllegalArgumentException Si la commande est mal formée.
+   */
   public SelectCommand(String command) {
     String[] commandParts = command.split(" ");
     if (commandParts.length < 4) {
@@ -57,6 +67,13 @@ public class SelectCommand {
     return new SelectCondition(columnName, operator, value);
   }
 
+  /**
+   * Exécute la requête SELECT sur la table spécifiée en appliquant les conditions
+   * si elles sont présentes.
+   *
+   * @throws IOException           En cas d'erreur d'entrée/sortie.
+   * @throws PageNotFoundException Si une page n'est pas trouvée.
+   */
   public void execute() {
     System.out.println("Executing SELECT command...");
 

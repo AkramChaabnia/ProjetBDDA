@@ -2,18 +2,32 @@ package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 
 import java.util.List;
 
+/**
+ * Représente une condition pour une requête SELECT sur une table de la base de
+ * données.
+ */
 public class SelectCondition {
   private String columnName; // the name of the column to compare with
   private String operator; // =, <, >, <=, >=, !=
   private String value; // the value to compare with
 
+  /**
+   * Crée une instance de condition avec les éléments spécifiés.
+   *
+   * @param columnName Le nom de la colonne à comparer.
+   * @param operator   L'opérateur de comparaison (=, <, >, <=, >=, !=).
+   * @param value      La valeur à comparer.
+   */
   public SelectCondition(String columnName, String operator, String value) {
     this.columnName = columnName;
     this.operator = operator;
     this.value = value;
   }
 
-  // Constructor for the case where there is no condition
+  /**
+   * Crée une instance de condition sans condition spécifique (tous les attributs
+   * sont nuls).
+   */
   public SelectCondition() {
     this.columnName = null;
     this.operator = null;
@@ -33,7 +47,12 @@ public class SelectCondition {
     return value;
   }
 
-  // Method to verify if a record satisfies this condition
+  /**
+   * Vérifie si un enregistrement satisfait cette condition.
+   *
+   * @param record L'enregistrement à vérifier.
+   * @return True si l'enregistrement satisfait la condition, sinon False.
+   */
   public boolean isSatisfiedBy(Record record) {
     // Get the value of the column in the record
     int columnIndex = -1;

@@ -3,17 +3,32 @@ package eclipse_projet_bdda_chaabnia_fekihhassen_benmansour_nadarajah;
 import java.nio.ByteBuffer;
 import java.util.ArrayList;
 
+
+/**
+ * Représente un enregistrement de données associé à une table.
+ */
 public class Record {
     private TableInfo tabInfo;
     private ArrayList<String> recvalues;
     private int size;
 
+    /**
+     * Initialise un nouvel enregistrement de données associé à la table spécifiée.
+     *
+     * @param tabInfo Informations sur la table à laquelle cet enregistrement est
+     *                associé.
+     */
     public Record(TableInfo tabInfo) {
         this.tabInfo = tabInfo;
         this.recvalues = new ArrayList<>();
 
     }
 
+     /**
+     * Calcule la taille de l'enregistrement en octets.
+     *
+     * @return La taille de l'enregistrement.
+     */
     private int calculateSize() {
         int recordSize = 0;
 
@@ -43,6 +58,14 @@ public class Record {
         return recordSize;
     }
 
+    /**
+     * Écrit les données de l'enregistrement dans un tampon de bytes à partir de la
+     * position spécifiée.
+     *
+     * @param buff Le tampon de bytes dans lequel écrire les données.
+     * @param pos  La position de départ dans le tampon.
+     * @return Le nombre d'octets écrits dans le tampon.
+     */
     public int writeToBuffer(byte[] buff, int pos) {
         int offset = pos;
 
@@ -71,6 +94,14 @@ public class Record {
         return offset - pos;
     }
 
+    /**
+     * Lit les données de l'enregistrement à partir d'un tampon de bytes à partir de
+     * la position spécifiée.
+     *
+     * @param buff Le tampon de bytes à partir duquel lire les données.
+     * @param pos  La position de départ dans le tampon.
+     * @return Le nombre d'octets lus à partir du tampon.
+     */
     public int readFromBuffer(byte[] buff, int pos) {
         int offset = pos;
         recvalues.clear();
@@ -101,19 +132,40 @@ public class Record {
         return offset - pos;
     }
 
-    // a verifier particulierement le set on on veut ajouter juste une entree
+    /**
+     * Obtient les informations sur la table à laquelle cet enregistrement est
+     * associé.
+     *
+     * @return Les informations sur la table.
+     */
     public TableInfo getTabInfo() {
         return tabInfo;
     }
 
+    /**
+     * Définit les informations sur la table à laquelle cet enregistrement est
+     * associé.
+     *
+     * @param tabInfo Les nouvelles informations sur la table.
+     */
     public void setTabInfo(TableInfo tabInfo) {
         this.tabInfo = tabInfo;
     }
 
+    /**
+     * Obtient les valeurs de l'enregistrement.
+     *
+     * @return Les valeurs de l'enregistrement.
+     */
     public ArrayList<String> getRecvalues() {
         return recvalues;
     }
 
+    /**
+     * Définit les valeurs de l'enregistrement.
+     *
+     * @param recvalues Les nouvelles valeurs de l'enregistrement.
+     */
     public void setRecvalues(ArrayList<String> recvalues) {
         this.recvalues = recvalues;
     }
@@ -123,12 +175,21 @@ public class Record {
     // this.size = calculateSize(); // on recalcule la taille apres chaque ajout
     // }
 
+    /**
+     * Ajoute une valeur à l'enregistrement.
+     *
+     * @param value La valeur à ajouter.
+     */
     public void addValue(Object value) {
         this.recvalues.add(String.valueOf(value));
         this.size = calculateSize(); // on recalcule la taille apres chaque ajout
-        System.out.println("Added value: " + value + " to record" + this.recvalues.size());
     }
 
+    /**
+     * Obtient la taille de l'enregistrement en octets.
+     *
+     * @return La taille de l'enregistrement.
+     */
     public int getSize() {
         return size;
     }
