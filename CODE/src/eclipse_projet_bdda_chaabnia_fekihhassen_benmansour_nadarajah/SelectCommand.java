@@ -9,22 +9,57 @@ import java.util.stream.Collectors;
 public class SelectCommand {
   private String relationName;
   private FileManager fileManager;
-  private String condition; // New field to store the condition
+  private ArrayList<SelectCondition> conditions; // New field to store the conditions
+  private boolean condition = false;
 
   public SelectCommand(String command) {
     String[] commandParts = command.split(" ");
-    // Assuming the table name is always the fourth part of the command
+    if (commandParts.length < 4) {
+      throw new IllegalArgumentException("Commande mal formée");
+    }
     this.relationName = commandParts[3];
     this.fileManager = FileManager.getInstance();
 
-    // Assuming the condition is always the sixth part of the command
-    if (commandParts.length > 5) {
-      this.condition = commandParts[5];
+    for (String elements : commandParts) {
+      if (elements.equals("WHERE")) {
+        this.condition = true;
+        break;
+      }
+    }
+
+    if (this.condition) {
+      String conditionsStr = command.substring(command.indexOf("WHERE") + 6).trim();
+      this.conditions = parseConditions(conditionsStr);
     }
   }
 
+  private ArrayList<SelectCondition> parseConditions(String conditionsStr) {
+    ArrayList<SelectCondition> parsedConditions = new ArrayList<>();
+
+    if (!conditionsStr.isEmpty()) {
+      String[] conditionsSplit = conditionsStr.split(" AND ");
+      for (String conditionStr : conditionsSplit) {
+        parsedConditions.add(parseEachCondition(conditionStr.trim()));
+      }
+    } else {
+      parsedConditions.add(new SelectCondition());
+    }
+
+    return parsedConditions;
+  }
+
+  private SelectCondition parseEachCondition(String conditionStr) {
+    String[] parts = conditionStr.split("=|<|>|<=|>=|<>");
+    String columnName = parts[0].trim();
+    String value = parts[1].trim();
+    String operator = conditionStr.substring(columnName.length(), conditionStr.length() - value.length()).trim();
+
+    return new SelectCondition(columnName, operator, value);
+  }
+
   public void execute() throws IOException, PageNotFoundException {
-    // get table info
+    System.out.println("Executing SELECT command...");
+
     TableInfo tableInfo = DataBaseInfo.getInstance().getTableInfo(relationName);
 
     if (tableInfo == null) {
@@ -32,15 +67,27 @@ public class SelectCommand {
       return;
     }
 
-    // get all the records
+    System.out.println("Fetching all records from table \"" + relationName + "\"...");
+    System.out.println("Number of columns = " + tableInfo.getNb_colonnes());
+    System.out.println(
+        "Column names = " + tableInfo.getColInfoList().stream().map(ColInfo::getName).collect(Collectors.toList()));
+    System.out.println("Header page id = " + tableInfo.getHeaderPageId());
+    System.out.println("Number of records = " + fileManager.GetAllRecords(tableInfo).size());
     List<Record> records = fileManager.GetAllRecords(tableInfo);
-    // Filter the records based on the condition
-    if (condition != null) {
+
+    if (this.condition) {
+      System.out.println("Filtering records based on conditions...");
       records = records.stream()
-          .filter(record -> evaluateCondition(record, condition))
+          .filter(record -> {
+            System.out.println("Checking conditions for record: " + record);
+            boolean satisfies = satisfiesConditions(record);
+            System.out.println("Does record satisfy conditions? " + satisfies);
+            return satisfies;
+          })
           .collect(Collectors.toList());
     }
 
+    System.out.println("Printing records...");
     for (Record record : records) {
       ArrayList<String> values = record.getRecvalues();
       for (String value : values) {
@@ -52,10 +99,13 @@ public class SelectCommand {
     System.out.println("Total records = " + records.size());
   }
 
-  // This is a placeholder method. You'll need to implement it based on your
-  // specific requirements.
-  private boolean evaluateCondition(Record record, String condition) {
-    // Evaluate the condition for the given record
+  private boolean satisfiesConditions(Record record) {
+    for (SelectCondition condition : conditions) {
+      if (!condition.isSatisfiedBy(record)) {
+        return false;
+      }
+    }
+
     return true;
   }
 }
