@@ -24,39 +24,61 @@ public class BufferManager {
 	}
 
 	public ByteBuffer getPage(PageId pageId, ByteBuffer buff) {
-		if (bufferPool.containsKey(pageId)) {
-			Frame frame = bufferPool.get(pageId);
-			frame.incrementerPinCount();
-			return frame.getBuffer();
-		} else {
-			ByteBuffer pageData = DiskManager.getInstance().readPage(pageId);
-			if (pageData == null) {
-				System.out.println("pageData is null in getPage with buffer");
+		try {
+			if (bufferPool.containsKey(pageId)) {
+				Frame frame = bufferPool.get(pageId);
+				frame.incrementerPinCount();
+				return frame.getBuffer();
 			} else {
-				System.out.println("pageData is not null in getPage with buffer");
+				ByteBuffer pageData = DiskManager.getInstance().readPage(pageId);
+				if (pageData == null) {
+					System.err.println("Error: Null pageData encountered for getPage: " + pageId);
+					// Potential causes: Disk read issues, missing page, etc.
+
+					return null;
+				} else {
+					System.out.println("PageData is not null in getPage for getPage: " + pageId);
+				}
+				Frame newFrame = new Frame(pageData);
+				bufferPool.put(pageId, newFrame);
+				return newFrame.getBuffer();
 			}
-			Frame newFrame = new Frame(pageData);
-			bufferPool.put(pageId, newFrame);
-			return newFrame.getBuffer();
+		} catch (
+
+		Exception e) {
+			System.err.println("Error in getPage for PageId: " + pageId + ". Reason: " + e.getMessage());
+			// Log or handle the exception appropriately
+			return null; // Or handle with appropriate error handling mechanism
 		}
+
 	}
 
 	public ByteBuffer getPage(PageId pageId) {
-		if (bufferPool.containsKey(pageId)) {
-			Frame frame = bufferPool.get(pageId);
-			frame.incrementerPinCount();
-			return frame.getBuffer();
-		} else {
-			ByteBuffer pageData = DiskManager.getInstance().readPage(pageId);
-			if (pageData == null) {
-				System.out.println("pageData is null in getPage");
+		try {
+
+			if (bufferPool.containsKey(pageId)) {
+				Frame frame = bufferPool.get(pageId);
+				frame.incrementerPinCount();
+				return frame.getBuffer();
 			} else {
-				System.out.println("pageData is not null in getPage");
+				ByteBuffer pageData = DiskManager.getInstance().readPage(pageId);
+				if (pageData == null) {
+					System.err.println("Error: Null pageData encountered for getPage: " + pageId);
+				} else {
+					System.out.println("PageData is not null in getPage for getPage: " + pageId);
+				}
+				Frame newFrame = new Frame(pageData);
+				bufferPool.put(pageId, newFrame);
+				return newFrame.getBuffer();
 			}
-			Frame newFrame = new Frame(pageData);
-			bufferPool.put(pageId, newFrame);
-			return newFrame.getBuffer();
+		} catch (
+
+		Exception e) {
+			System.err.println("Error in getPage for PageId: " + pageId + ". Reason: " + e.getMessage());
+			// Log or handle the exception appropriately
+			return null; // Or handle with appropriate error handling mechanism
 		}
+
 	}
 
 	public void freePage(PageId pageId, int valDirty) {
