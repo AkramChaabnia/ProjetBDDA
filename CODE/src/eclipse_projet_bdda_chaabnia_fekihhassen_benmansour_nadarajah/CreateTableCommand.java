@@ -17,9 +17,7 @@ public class CreateTableCommand {
    * @param command La commande de création de table
    */
   public CreateTableCommand(String command) {
-
     try {
-
       String[] cmd = command.split(" ");
       if (cmd.length < 4) {
         throw new IllegalArgumentException("Commande CREATE TABLE incomplète");
@@ -40,7 +38,8 @@ public class CreateTableCommand {
         String colType = colInfo[1];
 
         if (!colType.equalsIgnoreCase("INT") && !colType.equalsIgnoreCase("FLOAT")
-            && !colType.equalsIgnoreCase("STRING") && !colType.toUpperCase().startsWith("VARSTRING")) {
+            && !(colType.toUpperCase().startsWith("STRING") && colType.contains("(") && colType.contains(")"))
+            && !colType.toUpperCase().startsWith("VARSTRING")) {
           throw new IllegalArgumentException("Type de colonne non supporté : " + colType);
         }
 
