@@ -55,9 +55,9 @@ public class DataBaseInfo {
      */
     private void saveToFile() {
         try (ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream("BD\\DBInfo.save"))) {
-            oos.writeObject(tableInfoList);
+            // oos.writeObject(tableInfoList);
         } catch (IOException e) {
-            e.printStackTrace();
+            // e.printStackTrace();
         }
     }
 
@@ -71,7 +71,7 @@ public class DataBaseInfo {
             try (ObjectInputStream ois = new ObjectInputStream(new FileInputStream(file))) {
                 tableInfoList = (ArrayList<TableInfo>) ois.readObject();
             } catch (IOException | ClassNotFoundException e) {
-                e.printStackTrace();
+                // e.printStackTrace();
             }
         }
     }
